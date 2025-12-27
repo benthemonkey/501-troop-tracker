@@ -1,5 +1,8 @@
 <?php
 
+// Start session
+session_start();
+
 /**
  * This file is used for configuration and loading functions.
  *
@@ -34,9 +37,6 @@ $validSquadIDs = array_merge([0], array_column($squadArray, 'squadID'));
 
 // Include smileys
 require 'script/php/smiley.php';
-
-// Start session
-session_start();
 
 // Connect to server
 $conn = new mysqli(dbServer, dbUser, dbPassword, dbName);
@@ -412,6 +412,10 @@ function showSquadButtons()
 	// Loop through squads
 	foreach($squadArray as $squad => $squad_value)
 	{
+		if ($squad_value['squadID'] == 14) {
+			continue; // Skip garrison as it's already added
+		}
+
 		// Add to return var
 		$returnVar .= '
 		<a href="index.php?squad='.$squad_value['squadID'].'"><img src="images/'.$squad_value['logo'].'" alt="'.$squad_value['name'].' Troops" '.isSquadActive($squad_value['squadID']).' /></a>';

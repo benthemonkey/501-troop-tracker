@@ -221,7 +221,7 @@ if (!loggedIn()) {
             echo '
 			<a href="index.php?action=requestaccess" ' . isPageActive("requestaccess") . '>Request Access</a>
 			' . ($showLegacyAccountSetup ? '<a href="index.php?action=setup" ' . isPageActive("setup") . '>Account Setup</a>' : '') . '
-			<a href="faq" ' . isPageActive("faq") . '>FAQ</a>';
+			<a href="index.php?action=faq" ' . isPageActive("faq") . '>FAQ</a>';
         }
     }
 
@@ -1132,7 +1132,7 @@ if (isset($_GET['action']) && $_GET['action'] == "search") {
     // Format dates
     if (isset($_POST['submitSearch'])) {
         $dateStart = strtotime(($_POST['dateStart'] != "" ? $_POST['dateStart'] : '1990-01-01'));
-        $dateEnd = strtotime(($_POST['dateStart'] != "" ? $_POST['dateEnd'] : '3000-01-01'));
+        $dateEnd = strtotime(($_POST['dateEnd'] != "" ? $_POST['dateEnd'] : '3000-01-01'));
         $dateStartQuery = date('Y-m-d H:i:s', $dateStart);
         $dateEndQuery = date('Y-m-d H:i:s', $dateEnd);
     }
@@ -4541,7 +4541,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 				<select name="squadm" id="squadm">
 					<option value="null" ' . copyEventSelect($eid, $squad, "null") . '>Please choose an option...</option>
 					' . squadSelectList(false, "copy", $eid, $squad) . '
-					<option value="0" ' . copyEventSelect($eid, $squad, 0) . '>' . garrison . '</option>
+					<!-- <option value="0" ' . copyEventSelect($eid, $squad, 0) . '>' . garrison . '</option> -->
 				</select>
 
 				<p>Date/Time Start:</p>
@@ -6696,7 +6696,7 @@ if (!isWebsiteClosed()) {
 echo '
 <section class="tm-section tm-section-small">
 <p class="tm-mb-0">
-Website created by <a href="https://mattdrennan.com">Matthew Drennan (TK52233)</a>. If you encounter any technical issues with this site, please refer to the <a href="faq">FAQ page</a> for guidance.
+Website created by <a href="https://mattdrennan.com">Matthew Drennan (TK52233)</a>. If you encounter any technical issues with this site, please refer to the <a href="index.php?action=faq">FAQ page</a> for guidance.
 </p>
 
 <p class="tm-mb-0">
