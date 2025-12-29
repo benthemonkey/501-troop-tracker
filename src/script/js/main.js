@@ -3209,6 +3209,27 @@ $(document).ready(function () {
 
 		// Loop through each line
 		textArray.forEach(function (line, i) {
+			// Contact
+			if (line.includes("Contact Name:")) {
+				// hunt for contact info:
+				const phone = textArray.filter(function (line) {
+					return line.includes("Contact Phone Number:");
+				});
+				const email = textArray.filter(function (line) {
+					return line.includes("Contact Email:");
+				});
+				
+				let contact = line.split("Contact Name:")[1].trim();
+				if (phone.length > 0) {
+					contact += " - " + phone[0].split("Contact Phone Number:")[1].trim();
+				}
+				if (email.length > 0) {
+					contact += " - " + email[0].split("Contact Email:")[1].trim();
+				}
+				
+				$("#poc").val(contact);
+			}
+			
 			// Event title
 			if (line.includes("Event Name:")) {
 				$("#eventName").val(line.split("Event Name:")[1].trim());

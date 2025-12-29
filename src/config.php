@@ -709,7 +709,11 @@ function showBBcodes($text)
 {
 	global $replacements;
 
-	$text = strip_tags($text);
+	if (!empty($text)) {
+		$text = strip_tags($text);
+	} else {
+		return $text;
+	}
 
 	// BBcode array
 	$find = array(
@@ -4974,6 +4978,11 @@ function getStatus($value)
 */
 function validate_url($url)
 {
+	if (empty($url))
+	{
+		return 'No website available.';
+	}
+
 	$path = parse_url($url, PHP_URL_PATH);
 
 	$encoded_path = array_map('urlencode', @explode('/', $path));

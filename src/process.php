@@ -3646,7 +3646,20 @@ if(isset($_GET['do']) && $_GET['do'] == "editevent" && loggedIn() && isAdmin())
 
 				// Update thread
 				editPost(getEventPostID($_POST['eventIdE']), $thread_body);
-				moveThread(getEventThreadID($_POST['eventIdE']), $squadArray[intval($_POST['squadm'] - 1)]['eventForum']);
+				// find $squadArray entry where squad ID matches $_POST['squadm']
+				$squad = null;
+				foreach ($squadArray as $squad_entry)
+				{
+					if ($squad_entry['squadID'] == intval($_POST['squadm']))
+					{
+						$squad = $squad_entry;
+						break;
+					}
+				}
+				if ($squad !== null)
+				{
+					moveThread(getEventThreadID($_POST['eventIdE']), $squad['eventForum']);
+				}
 
 				// Loop through clubs
 				foreach($clubArray as $club => $club_value)

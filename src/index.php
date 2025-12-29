@@ -1140,6 +1140,7 @@ if (isset($_GET['action']) && $_GET['action'] == "search") {
     // Get our search type, and show certain fields
     // Regular search
     if (isset($_POST['searchType']) && $_POST['searchType'] == "regular") {
+        // echo '<pre>Debug Info: ' . $dateStartQuery . ' - ' . $dateEndQuery . '</pre>';
         // Get data
         $i = 0;
         $statement = $conn->prepare("SELECT events.squad AS eventSquad, event_sign_up.trooperid, event_sign_up.troopid, event_sign_up.costume, event_sign_up.status, events.name AS eventName, events.id AS eventId, events.charityDirectFunds, events.charityIndirectFunds, events.dateStart, events.dateEnd FROM events LEFT JOIN event_sign_up ON events.id = event_sign_up.troopid LEFT JOIN troopers ON troopers.id = event_sign_up.trooperid WHERE troopers.id != " . placeholder . " AND troopers.tkid LIKE CONCAT('%', ?, '%') AND events.name LIKE CONCAT('%', ?, '%') AND events.dateStart >= ? AND events.dateEnd <= ? AND troopers.name LIKE CONCAT('%', ?, '%')");
@@ -4888,7 +4889,7 @@ if (isset($_GET['action']) && $_GET['action'] == "faq") {
 
 	<h3>My costumes are not showing on my profile / I am missing a costume on my profile</h3>
 	<p>
-		The troop tracker automatically scrapes several different club databases for your costume data. If your costume data is not showing, make sure your ID numbers and forum username\'s are accurate. If the aforementioned information is correct, than refer to your squad / club leadership, as this data is missing on their end.
+		The troop tracker automatically scrapes the 501st database for your costume data. If your costume data is not showing, make sure your ID numbers and forum username\'s are accurate. If the aforementioned information is correct, than refer to your squad / club leadership, as this data is missing on their end. Note that costumes are not tracked for other clubs at this time.
 	</p>
 
 	<h3>How do I know I confirmed a troop?</h3>
@@ -5387,8 +5388,8 @@ if (isset($_GET['event']) && loggedIn()) {
 				<p><b>Event End:</b> ' . $date2 . ' (' . date('l', strtotime($db->dateEnd)) . ')</p>
 				<div id="options" ' . $style . '>
 					<p><b>Website:</b> ' . validate_url($db->website) . '</p>
-					<p><b>Expected number of attendees:</b> ' . number_format($db->numberOfAttend) . '</p>
-					<p><b>Requested number of characters:</b> ' . number_format($db->requestedNumber) . '</p>
+					<p><b>Expected number of attendees:</b> ' . number_format($db->numberOfAttend ?? 0) . '</p>
+					<p><b>Requested number of characters:</b> ' . number_format($db->requestedNumber ?? 0) . '</p>
 					<p><b>Requested character types:</b> ' . $db->requestedCharacter . '</p>
 					<p><b>Secure changing/staging area:</b> ' . yesNo($db->secureChanging) . '</p>
 					<p><b>Can troopers bring blasters:</b> ' . yesNo($db->blasters) . '</p>
