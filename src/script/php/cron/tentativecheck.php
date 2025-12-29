@@ -28,13 +28,26 @@ $query = "SELECT troopers.user_id, troopers.email, troopers.name, events.dateSta
 if ($result = mysqli_query($conn, $query))
 {
     while ($db = mysqli_fetch_object($result))
-    {        
+    {
+        // Get all tentative events for this trooper
+        $eventsQuery = "SELECT events.id, events.name, events.dateStart FROM event_sign_up LEFT JOIN events ON events.id = event_sign_up.troopid WHERE event_sign_up.trooperid = {$db->trooperid} AND event_sign_up.status = 2 AND NOW() > events.dateStart - INTERVAL 7 DAY ORDER BY events.dateStart";
+
+        $eventsList = "";
+        if ($eventsResult = mysqli_query($conn, $eventsQuery))
+        {
+            while ($event = mysqli_fetch_object($eventsResult))
+            {
+                $eventDate = date('F j, Y', strtotime($event->dateStart));
+                $eventsList .= "• {$event->name} ({$eventDate})\n  https://midwestgarrison.com/tracker/index.php?event={$event->id}\n\n";
+            }
+        }
+
         // Set up message
-        $message = "Hello!\n\nYou are signed up for troop(s) as a tentative trooper that occurs within 7 days. Please set yourself as going or canceled, otherwise you will be dropped from the troop. This is to help other troopers and command staff plan accordingly.\n\n";
+        $message = "Hello!\n\nYou are signed up for troop(s) as a tentative trooper that occurs within 7 days. Please set yourself as going or canceled, otherwise you will be dropped from the troop. This is to help other troopers and command staff plan accordingly.\n\nYour tentative troops:\n\n{$eventsList}";
 
         // Send Alert
         createAlert($db->user_id, "You are signed up for troop(s) as a tentative trooper that occurs within 7 days. Please change your status to going or canceled to help other troopers and command staff plan accordingly.");
-        
+
         // Send E-mail
         sendEmail($db->email, readInput($db->name), "Troop Tracker: Please adjust your status!", readInput($message));
     }
