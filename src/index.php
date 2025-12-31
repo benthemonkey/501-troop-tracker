@@ -1827,7 +1827,7 @@ if (isset($_GET['action']) && $_GET['action'] == "trooptracker" && loggedIn()) {
     // If squad is not set
     if (!isset($_GET['squad'])) {
         // Get data
-        $statement = $conn->prepare("SELECT events.squad AS eventSquad, event_sign_up.trooperid, event_sign_up.troopid, event_sign_up.costume, event_sign_up.status, events.name AS eventName, events.id AS eventId, events.charityDirectFunds, events.charityIndirectFunds, events.dateStart, events.dateEnd, (TIMESTAMPDIFF(HOUR, events.dateStart, events.dateEnd) + events.charityAddHours) AS charityHours FROM events LEFT JOIN event_sign_up ON events.id = event_sign_up.troopid WHERE events.closed = '1' GROUP BY events.id ORDER BY events.dateEnd DESC LIMIT 20");
+        $statement = $conn->prepare("SELECT events.squad AS eventSquad, events.name AS eventName, events.id AS eventId, events.charityDirectFunds, events.charityIndirectFunds, events.dateStart, events.dateEnd, (TIMESTAMPDIFF(HOUR, events.dateStart, events.dateEnd) + events.charityAddHours) AS charityHours FROM events WHERE events.closed = '1' GROUP BY events.id ORDER BY events.dateEnd DESC LIMIT 20");
     } else {
         // Set results per page
         $results = 20;
@@ -1871,11 +1871,11 @@ if (isset($_GET['action']) && $_GET['action'] == "trooptracker" && loggedIn()) {
         // Check if squad is not all
         if ($_GET['squad'] != 0) {
             // Squad is set, show only that data
-            $statement = $conn->prepare("SELECT events.squad AS eventSquad, event_sign_up.trooperid, event_sign_up.troopid, event_sign_up.costume, event_sign_up.status, events.name AS eventName, events.id AS eventId, events.charityDirectFunds, events.charityIndirectFunds, events.dateStart, events.dateEnd, (TIMESTAMPDIFF(HOUR, events.dateStart, events.dateEnd) + events.charityAddHours) AS charityHours FROM events LEFT JOIN event_sign_up ON events.id = event_sign_up.troopid WHERE events.closed = '1' AND events.squad = ? GROUP BY events.id ORDER BY events.dateEnd DESC LIMIT " . $startFrom . ", " . $results . "");
+            $statement = $conn->prepare("SELECT events.squad AS eventSquad, events.name AS eventName, events.id AS eventId, events.charityDirectFunds, events.charityIndirectFunds, events.dateStart, events.dateEnd, (TIMESTAMPDIFF(HOUR, events.dateStart, events.dateEnd) + events.charityAddHours) AS charityHours FROM events WHERE events.closed = '1' AND events.squad = ? GROUP BY events.id ORDER BY events.dateEnd DESC LIMIT " . $startFrom . ", " . $results . "");
             $statement->bind_param("i", $_GET['squad']);
         } else {
             // Squad is set, show only that data
-            $statement = $conn->prepare("SELECT events.squad AS eventSquad, event_sign_up.trooperid, event_sign_up.troopid, event_sign_up.costume, event_sign_up.status, events.name AS eventName, events.id AS eventId, events.charityDirectFunds, events.charityIndirectFunds, events.dateStart, events.dateEnd, (TIMESTAMPDIFF(HOUR, events.dateStart, events.dateEnd) + events.charityAddHours) AS charityHours FROM events LEFT JOIN event_sign_up ON events.id = event_sign_up.troopid WHERE events.closed = '1' GROUP BY events.id ORDER BY events.dateEnd DESC LIMIT " . $startFrom . ", " . $results . "");
+            $statement = $conn->prepare("SELECT events.squad AS eventSquad, events.name AS eventName, events.id AS eventId, events.charityDirectFunds, events.charityIndirectFunds, events.dateStart, events.dateEnd, (TIMESTAMPDIFF(HOUR, events.dateStart, events.dateEnd) + events.charityAddHours) AS charityHours FROM events WHERE events.closed = '1' GROUP BY events.id ORDER BY events.dateEnd DESC LIMIT " . $startFrom . ", " . $results . "");
         }
     }
 
