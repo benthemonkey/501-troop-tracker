@@ -279,8 +279,10 @@ if (loggedIn()) {
 
     $threads = getThreadsFromForum($userID);
 
-   // Check if threads has data and is properly formatted
-	if($threads && is_array($threads) && count($threads) > 0 && !isset($threads['errors'])) {
+    // Check if threads has data and is properly formatted
+    $hasThreads = $threads && !empty($threads['threads']) && is_array($threads['threads']);
+    $hasSticky = $threads && !empty($threads['sticky']) && is_array($threads['sticky']);
+	if(($hasThreads || $hasSticky) && !isset($threads['errors'])) {
 		echo '<div class="container-announce">';
 
 		// Check if sticky threads exist and is an array
