@@ -280,7 +280,7 @@ if (loggedIn()) {
     $threads = getThreadsFromForum($userID);
 
    // Check if threads has data and is properly formatted
-	if($threads && is_array($threads) && !isset($threads['errors'])) {
+	if($threads && is_array($threads) && count($threads) > 0 && !isset($threads['errors'])) {
 		echo '<div class="container-announce">';
 
 		// Check if sticky threads exist and is an array
@@ -2212,20 +2212,21 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 			<a href="index.php?action=commandstaff&do=editevent" class="button">Edit an Event</a> 
 			<a href="index.php?action=commandstaff&do=eventlinkmanager" class="button">Event Link Manager</a> 
 			<a href="index.php?action=commandstaff&do=roster" class="button">Roster</a> 
-			<a href="index.php?action=commandstaff&do=notifications" class="button">Notifications</a> 
-			<a href="index.php?action=commandstaff&do=approvetroopers" class="button" id="trooperRequestButton" name="trooperRequestButton">Approve Trooper Requests - (' . $getTrooperNotifications . ')</a> ';
+			<a href="index.php?action=commandstaff&do=notifications" class="button">Notifications</a>';
 
         if (hasPermission(1)) {
             echo ' 
 				<a href="index.php?action=commandstaff&do=managecostumes" class="button">Costume Management</a> 
 				<a href="index.php?action=commandstaff&do=managetroopers" class="button">Trooper Management</a> 
 				<a href="index.php?action=commandstaff&do=assignawards" class="button">Award Management</a>
-				<a href="index.php?action=commandstaff&do=stats" class="button">Statistics</a>';
+				<a href="index.php?action=commandstaff&do=stats" class="button">Statistics</a>
+			    <a href="index.php?action=commandstaff&do=sitesettings" class="button">Site Settings</a>';
         }
 
         // If have special permission for trooper management
         if (hasSpecialPermission("spTrooper")) {
-            echo '<a href="index.php?action=commandstaff&do=managetroopers" class="button">Trooper Management</a> ';
+            echo '<a href="index.php?action=commandstaff&do=managetroopers" class="button">Trooper Management</a> 
+                  <a href="index.php?action=commandstaff&do=approvetroopers" class="button" id="trooperRequestButton" name="trooperRequestButton">Approve Trooper Requests - (' . $getTrooperNotifications . ')</a> ';
         }
 
         // If have special permission for costume management
@@ -2237,9 +2238,6 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
         if (hasSpecialPermission("spAward")) {
             echo '<a href="index.php?action=commandstaff&do=assignawards" class="button">Award Management</a> ';
         }
-
-        echo '
-			<a href="index.php?action=commandstaff&do=sitesettings" class="button">Site Settings</a>';
 
         echo '
 		</p>';
