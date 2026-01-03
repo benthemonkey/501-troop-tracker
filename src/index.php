@@ -231,7 +231,8 @@ if (!loggedIn()) {
     // Logged in
     echo '
 	<a href="index.php?action=trooptracker" ' . isPageActive("trooptracker") . '>Stats & Search</a>
-	<a href="index.php?action=account" ' . isPageActive("account") . '>Manage Account</a>';
+	<a href="index.php?action=account" ' . isPageActive("account") . '>Manage Account</a>
+    <a href="index.php?action=faq" ' . isPageActive("faq") . '>FAQ</a>';
 
     // If is admin
     if (isAdmin()) {
@@ -5750,7 +5751,7 @@ if (isset($_GET['event']) && loggedIn()) {
 
 										<p>Select a status:</p>
 
-										<select name="status">
+										<select name="status" id="status">
 											<option value="null" SELECTED>Please choose an option...</option>';
 
                                 if ($db->limitedEvent != 1) {

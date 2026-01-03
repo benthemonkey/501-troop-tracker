@@ -85,7 +85,7 @@ if(isset($_GET['do']) && isset($_GET['event']) && $_GET['do'] == "load-add-frien
 
 	<p>Select a status:</p>
 
-	<select name="status">
+	<select name="status" id="status">
 		<option value="null" SELECTED>Please choose an option...</option>';
 
 	if(getEventColumn('limitedEvent', cleanInput($_GET['event'])) != 1)
@@ -285,7 +285,7 @@ if(isset($_GET['do']) && isset($_GET['event']) && isset($_GET['thread_id']) && $
 					<td>
 						<a href="index.php?profile='.$post['User']['custom_fields']['trackerid'].'">'.$post['User']['custom_fields']['fullname'].' - '.$post['User']['custom_fields']['tkid'].'<br />'.$post['username'].'</a>'.($post['User']['avatar_urls']['m'] != '' ? '<br /><img src="'.$post['User']['avatar_urls']['m'].'" />' : '').'
 						<br />
-						'.date("F j, Y, g:i a", $post['post_date']).'
+						'.date("F j, Y, g:i a", $post['post_date'] - 3600).'
 						'. (($link > 0) ? '<br /><span' . ($post['eventID'] == $_GET['event'] ? ' style="color: yellow;"' : '') . '><b>Shift:</b> ' . date('l, m/d - h:i A', strtotime($post['dateStart'])) . ' - ' . date('h:i A', strtotime($post['dateEnd'])) . '</span>' : '') .'
 					</td>
 				</tr>
@@ -1091,7 +1091,7 @@ if(isset($_GET['do']) && $_GET['do'] == "postcomment" && isset($_POST['submitCom
 				<td>
 					<a href="index.php?profile='.$post['User']['custom_fields']['trackerid'].'">'.$post['User']['custom_fields']['fullname'].' - '.$post['User']['custom_fields']['tkid'].'<br />'.$post['username'].'</a>'.($post['User']['avatar_urls']['m'] != '' ? '<br /><img src="'.$post['User']['avatar_urls']['m'].'" />' : '').'
 					<br />
-					'.date("F j, Y, g:i a", $post['post_date']).'
+					'.date("F j, Y, g:i a", $post['post_date'] - 3600).'
 					'. (($link > 0) ? '<br /><span' . ($post['eventID'] == $_GET['event'] ? ' style="color: yellow;"' : '') . '><b>Shift:</b> ' . date('l, m/d - h:i A', strtotime($post['dateStart'])) . ' - ' . date('h:i A', strtotime($post['dateEnd'])) . '</span>' : '') .'
 				</td>
 			</tr>

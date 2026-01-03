@@ -327,6 +327,14 @@ $(document).ready(function () {
 			}
 		});
 	});
+	
+	// Placeholder save on "enter"
+	$(document).on('keypress', '[name=placeholdertext]', function (e) {
+		if (e.which == 13) { // Enter key pressed
+			$(this).blur(); // Trigger blur event to save
+			e.preventDefault();
+		}
+	});
 
 	// DB3 save note
 	$(document).on('blur', '[name=changedb3]', function () {
@@ -613,6 +621,9 @@ $(document).ready(function () {
 	$("body").on("click", "#withoutAccount", function (e) {
 		$("#trooperSelect").val(placeholder);
 		$("#trooperSelect").select2();
+		
+		// select the 2nd option in the select
+		$('#status').val($('#status').children('option:nth-child(2)').val());
 	})
 
 	// Roster - Update member status
