@@ -10,6 +10,9 @@ session_start();
  *
  */
 
+// Suppress warnings in production (set to E_ALL for development)
+error_reporting(E_ERROR | E_PARSE);
+
 // Set time zone
 date_default_timezone_set("America/New_York");
 
@@ -38,8 +41,18 @@ $validSquadIDs = array_merge([0], array_column($squadArray, 'squadID'));
 // Include smileys
 require 'script/php/smiley.php';
 
-// Connect to server
-$conn = new mysqli(dbServer, dbUser, dbPassword, dbName);
+// Include Query Logger
+require 'QueryLogger.php';
+
+// Connect to server with query logging
+// Set ENABLE_QUERY_LOGGING to false in cred.php to disable
+$enableQueryLogging = defined('ENABLE_QUERY_LOGGING') ? ENABLE_QUERY_LOGGING : true;
+
+if ($enableQueryLogging) {
+	$conn = new QueryLogger(dbServer, dbUser, dbPassword, dbName, __DIR__ . '/logs/query_performance.log');
+} else {
+	$conn = new mysqli(dbServer, dbUser, dbPassword, dbName);
+}
 
 // Check connection to server
 if ($conn->connect_error)
@@ -182,6 +195,172 @@ function dailyTip()
 	{
 		return '<span style="text-align: center; color: #54f77d; display: block;"><b>TIP:</b> ' . $tip . '</span>';
 	}
+}
+
+function loadSubscribeUpdates($event, $thread_id, $id)
+{
+	global $conn, $forumURL;
+	
+	// Query to see if trooper is subscribed
+	$statement = $conn->prepare("SELECT * FROM event_notifications WHERE trooperid = ? AND troopid = ?");
+	$statement->bind_param("ii", $id, $event);
+	$statement->execute();
+	$statement->store_result();
+	$isSubscribed = $statement->num_rows;
+
+	// Set default subscribe button text
+	$subscribeText = "Subscribe Updates";
+
+	// Check if we are subscribed
+	if($isSubscribed > 0)
+	{
+		$subscribeText = "Unsubscribe Updates";
+	}
+	
+	// Create button variable
+	return '
+	<p style="text-align: center;">
+		<a href="#/" class="button" id="subscribeupdates" event="'.cleanInput($event).'" aria-label="Get updates on sign ups and cancellations." data-balloon-pos="up" data-balloon-length="fit">'.$subscribeText.'</a>
+		<a href="'.$forumURL.'threads/'.cleanInput($thread_id).'/watch" target="_blank" class="button" aria-label="Get updates on replies to this event." data-balloon-pos="up" data-balloon-length="fit">Watch Discussion</a>
+	</p>';
+}
+
+function loadAddFriends($event, $id)
+{
+	global $conn, $dualCostume, $mainCostumes;
+	
+	$out = '
+	<form action="process.php?do=signup" method="POST" name="signupForm3" id="signupForm3">
+		<input type="hidden" name="event" value="'.cleanInput($event).'" />';
+			
+	// Load all users
+	$statement = $conn->prepare("SELECT troopers.id AS troopida, troopers.name AS troopername, troopers.tkid, troopers.squad FROM troopers WHERE NOT EXISTS (SELECT event_sign_up.trooperid FROM event_sign_up WHERE event_sign_up.trooperid = troopers.id AND event_sign_up.troopid = ? AND event_sign_up.trooperid != ".placeholder.") AND troopers.approved = 1 ORDER BY troopers.name");
+	$statement->bind_param("i", $event);
+	$statement->execute();
+
+	$i = 0;
+	if ($result = $statement->get_result())
+	{
+		while ($db = mysqli_fetch_object($result))
+		{
+			// First add this to make a list
+			if($i == 0)
+			{
+				$out .= '
+				<form action="process.php?do=editevent" method="POST" name="troopRosterFormAdd" id="troopRosterFormAdd">
+					<input type="hidden" name="troopid" id="troopid" value="'.cleanInput($event).'" />
+
+					<p>Select a trooper to add:</p>
+					<select name="trooperSelect" id="trooperSelect">';
+			}
+			
+			// Get TKID
+			$tkid = readTKNumber($db->tkid, $db->squad, $db->troopida);
+
+			// List troopers
+			$out .= '
+			<option value="'.$db->troopida.'" tkid="'.$tkid.'" troopername="'.$db->troopername.'">'.$db->troopername.' - '.$tkid.'</option>';
+			$i++;
+		}
+	}
+
+	// If no troopers
+	if($i == 0)
+	{
+		$out .= 'No troopers to add.';
+	}
+	else
+	{
+		$out .= '
+		</select>
+		
+		<a href="#/" class="button" id="withoutAccount" aria-label="Once you add a friend without an account using placeholder. Click on the blank textbox on the roster to set a name. To save, click off to the side after writing the name." data-balloon-pos="down" data-balloon-length="fit">Add a friend without an account</a>';
+	}
+			
+	$out .= '
+	<p>What costume will they wear?</p>
+	<select name="costume" id="costume">
+		<option value="null" SELECTED>Please choose an option...</option>';
+
+	$statement = $conn->prepare("SELECT * FROM costumes WHERE club NOT IN (".implode(",", $dualCostume).") ORDER BY FIELD(costume, ".$mainCostumes."".mainCostumesBuild($id).") DESC, costume");
+	$statement->execute();
+
+	if ($result3 = $statement->get_result())
+	{
+		while ($db3 = mysqli_fetch_object($result3))
+		{
+			$out .= '
+			<option value="'. $db3->id .'" club="'. $db3->club .'">'.getCostumeAbbreviation($db3->club).' '.$db3->costume.'</option>';
+		}
+	}
+
+	$out .= '
+	</select>
+
+	<br />
+
+	<p>Select a status:</p>
+
+	<select name="status" id="status">
+		<option value="null" SELECTED>Please choose an option...</option>';
+
+	if(getEventColumn('limitedEvent', cleanInput($event)) != 1)
+	{
+		$out .= '
+			<option value="0">I\'ll be there!</option>';
+			
+		// Check if tentative allowed
+		if(getEventColumn('allowTentative', cleanInput($event)) == 1)
+		{
+			$out .= '
+			<option value="2">Tentative</option>';
+		}
+	}
+	else
+	{
+		$out .= '
+		<option value="5">Request to attend (Pending)</option>';								
+	}
+
+	$out .= '
+	</select>
+
+	<p>Back up costume (if applicable):</p>
+
+	<select name="backupcostume" id="backupcostume">';
+
+	// Display costumes
+	$statement = $conn->prepare("SELECT * FROM costumes WHERE club NOT IN (".implode(",", $dualCostume).") AND " . costume_restrict_query(0, false, false) . " ORDER BY FIELD(costume, ".$mainCostumes."".mainCostumesBuild($id).") DESC, costume");
+	$statement->execute();
+
+	// Amount of costumes
+	$c = 0;
+	if ($result2 = $statement->get_result())
+	{
+		while ($db2 = mysqli_fetch_object($result2))
+		{
+			if($c == 0)
+			{
+				$out .= '<option value="0">Select a costume...</option>';
+			}
+
+			// Display costume
+			$out .= '<option value="'.$db2->id.'">'.getCostumeAbbreviation($db2->club).' '.$db2->costume.'</option>';
+
+			$c++;
+		}
+	}
+
+	$out .= '
+	</select>
+
+	<br />
+	<br />
+
+	<input type="submit" value="Add Friend" name="submitSignUp" />
+	</form>';
+	
+	return $out;
 }
 
 /**

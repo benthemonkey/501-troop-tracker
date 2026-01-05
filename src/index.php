@@ -5315,11 +5315,7 @@ if (isset($_GET['event']) && loggedIn()) {
 					<div class="section-card">
 					<h2 class="tm-section-header">Event Tools</h2>
 
-					<div id="subscribe-area">
-						<div style="text-align: center;">
-							<img src="images/loading.gif" />
-						</div>
-					</div>';
+					<div id="subscribe-area">' . loadSubscribeUpdates($db->id, $db->thread_id, $_SESSION['id']) . '</div>';
 
                     // Add to calendar links
                     echo showCalendarLinks($db->name, $db->location, "Troop Tracker Event", $db->dateStart, $db->dateEnd);
@@ -5640,11 +5636,7 @@ if (isset($_GET['event']) && loggedIn()) {
             echo '
 			<div class="section-card">
 			<h2 class="tm-section-header">Roster</h2>
-			<div style="overflow-x: auto;" id="signuparea1" name="signuparea1">
-				<div style="text-align: center;">
-					<img src="images/loading.gif" />
-				</div>
-			</div>
+			<div style="overflow-x: auto;" id="signuparea1" name="signuparea1">' . getRoster($_GET['event'])[0] . '</div>
 			<p>
 				<a href="script/php/gencsv.php?troopid=' . cleanInput($_GET['event']) . '" class="button">Generate CSV</a>
 			</p>
@@ -6051,8 +6043,7 @@ if (isset($_GET['event']) && loggedIn()) {
                         echo '
 						<h2 class="tm-section-header">Add a Friend</h2>
 
-						<div id="add-friend-form">
-						</div>
+						<div id="add-friend-form">' . loadAddFriends(cleanInput($_GET['event']), $_SESSION['id']) . '</div>
 						</div>';
                     } else {
                         echo '

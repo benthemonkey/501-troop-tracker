@@ -282,11 +282,11 @@ $(document).ready(function () {
 	selectAdd();
 
 	// Load add friend
-	if ($('#add-friend-form').length) {
-		$("#add-friend-form").load('process.php?do=load-add-friend&event=' + $("#troopid").val(), function () {
-			selectAdd();
-		});
-	}
+	// if ($('#add-friend-form').length) {
+	// 	$("#add-friend-form").load('process.php?do=load-add-friend&event=' + $("#troopid").val(), function () {
+	// 		selectAdd();
+	// 	});
+	// }
 
 	// Load tagged troopers
 	if ($('#tagged-troopers').length) {
@@ -298,16 +298,16 @@ $(document).ready(function () {
 	}
 
 	// Load subscribe updates
-	if ($('#subscribe-area').length) {
-		$("#subscribe-area").load('process.php?do=load-subscribe-updates&event=' + $("#troopid").val() + '&thread_id=' + $("#thread_id").val());
-	}
+	// if ($('#subscribe-area').length) {
+	// 	$("#subscribe-area").load('process.php?do=load-subscribe-updates&event=' + $("#troopid").val() + '&thread_id=' + $("#thread_id").val());
+	// }
 
 	// Load roster
-	if ($('#signuparea1').length) {
-		$("#signuparea1").load('process.php?do=load-roster&event=' + $("#troopid").val(), function () {
-			selectAdd();
-		});
-	}
+	// if ($('#signuparea1').length) {
+	// 	$("#signuparea1").load('process.php?do=load-roster&event=' + $("#troopid").val(), function () {
+	// 		selectAdd();
+	// 	});
+	// }
 
 	// Load discussion
 	if ($('#commentArea').length) {
