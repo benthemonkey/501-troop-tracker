@@ -2842,7 +2842,7 @@ if(isset($_GET['do']) && $_GET['do'] == "createevent" && loggedIn() && isAdmin()
 							$forumCat = labelToForumCategory($_POST['label'], $_POST['squadm']);
 
 							// Create thread on forum
-							$thread = createThread($forumCat, date("m/d/y h:i A", strtotime($date1)) . " - " . date("h:i A", strtotime($date2)) . " " . $_POST['eventName'], $thread_body, getUserID($_SESSION['id']));
+							$thread = createThread($forumCat, date("Y/m/d h:i A", strtotime($date1)) . " - " . date("h:i A", strtotime($date2)) . " " . $_POST['eventName'], $thread_body, getUserID($_SESSION['id']));
 
 							// Update event
 							$statement = $conn->prepare("UPDATE events SET thread_id = ?, post_id = ? WHERE id = ?");
@@ -2866,7 +2866,7 @@ if(isset($_GET['do']) && $_GET['do'] == "createevent" && loggedIn() && isAdmin()
 				$forumCat = labelToForumCategory($_POST['label'], $_POST['squadm']);
 
 				// Set title
-				$title = date("m/d/y", strtotime($date1)) . " " . $_POST['eventName'];
+				$title = date("Y/m/d", strtotime($date1)) . " " . $_POST['eventName'];
 
 				// Change date based on event type
 				if($isShift) {
@@ -2875,7 +2875,7 @@ if(isset($_GET['do']) && $_GET['do'] == "createevent" && loggedIn() && isAdmin()
 					$date2 = date('Y-m-d H:i:s', strtotime($_POST['dateEnd']));
 					
 					// Set up title
-					$title = date("m/d/y h:i A", strtotime($date1)) . " - " . date("h:i A", strtotime($date2)) . " " . $_POST['eventName'];
+					$title = date("Y/m/d h:i A", strtotime($date1)) . " - " . date("h:i A", strtotime($date2)) . " " . $_POST['eventName'];
 				}
 
 				// Create thread on forum

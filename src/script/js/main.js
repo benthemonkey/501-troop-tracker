@@ -3277,7 +3277,7 @@ $(document).ready(function () {
 
 			// Date Start
 			if (line.includes("Event Start:")) {
-				$("#datepicker").val(moment(new Date(line.split("Event Start:")[1].trim())).format('MM/DD/YYYY HH:mm'));
+				$("#datepicker").val(moment(line.split("Event Start:")[1].trim(), 'MM/DD/YYYY h:mm a').format('MM/DD/YYYY HH:mm'));
 
 				// Check if date is invalid
 				if ($("#datepicker").val() == "Invalid date") {
@@ -3285,13 +3285,13 @@ $(document).ready(function () {
 					$("#datepicker").val("");
 
 					// Add to message
-					error += "-Date Start is invalid (format, hours in military: MM/DD/YYYY HH:mm)\n";
+					error += "-Date Start is invalid\n";
 				}
 			}
 
 			// Date Start
 			if (line.includes("Event End:")) {
-				$("#datepicker2").val(moment(new Date(line.split("Event End:")[1].trim())).format('MM/DD/YYYY HH:mm'));
+				$("#datepicker2").val(moment(line.split("Event End:")[1].trim(), 'MM/DD/YYYY h:mm a').format('MM/DD/YYYY HH:mm'));
 
 				// Check if date is invalid
 				if ($("#datepicker2").val() == "Invalid date") {
@@ -3299,7 +3299,7 @@ $(document).ready(function () {
 					$("#datepicker2").val("");
 
 					// Add to message
-					error += "-Date End is invalid (format, hours in military: MM/DD/YYYY HH:mm)\n";
+					error += "-Date End is invalid\n";
 				}
 			}
 
@@ -3433,6 +3433,9 @@ $(document).ready(function () {
 
 			// Show message
 			alert(error);
+		} else {
+			$("#easyfilltoolarea").hide();
+			$("#easyfilltoolbutton").text("Easy Fill Tool");
 		}
 	})
 });

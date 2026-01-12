@@ -4505,6 +4505,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 			
 			<div name="easyfilltoolarea" id="easyfilltoolarea" style="display: none;">
 			<p>Easy Fill Tool:</p>
+            <p><em>Date Format: MM/DD/YYYY h:mm am/pm (Example: 12/02/2024 5:30 pm)</em></p>
 			<form action="index.php?action=commandstaff&do=createevent" method="POST" name="easyFillTool" id="easyFillTool">
 				<textarea rows="10" cols="50" name="easyFill" id="easyFill"></textarea>
 				<br />

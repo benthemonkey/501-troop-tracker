@@ -97,52 +97,59 @@ $(function()
                         // If success
                         if (json.success == "success")
                         {
-                            // Clear Form
-                            $("#eventName").val("");
-                            $("#eventVenue").val("");
-                            $("#location").val("");
-                            $("#squadm").val("null");
-                            $("#datepicker").val("");
-                            $("#datepicker2").val("");
-                            $("#website").val("");
-                            $("#numberOfAttend").val("");
-                            $("#requestedNumber").val("");
-                            $("#requestedCharacter").val("");
-                            $("#secure").val("null");
-                            $("#blasters").val("null");
-                            $("#lightsabers").val("null");
-                            $("#parking").val("null");
-                            $("#mobility").val("null");
-                            $("#amenities").val("");
-                            $("#comments").val("");
-                            $("#label").val("null");
-                            $("#limitedEvent").val("0");
-                            $("#limit501st").val("500");
-                            $("[name=smileyarea]").html("");
-                            $("#postToBoards").val(1);
-
-                            // Loop through clubs
-                            for(var i = 0; i <= (clubArray.length - 1); i++)
-                            {
-                                $("#" + clubArray[i]).val(500);
-                            }
-
-                            $("#referred").val("");
-							$("#poc").val("");
-                            $("#options").show();
-
-                            // Remove all shift boxes
-                            $("div[name*='pair']").each(function()
-                            {
-                                $(this).remove();
-                            });
-							
-							// Set event link
-							$("#create_event_area").html('<p><a href="index.php?event=' + json.eventid + '" class="button">View Posted Event</a>');
+                            window.location.href = "index.php?event=" + json.eventid;
+                        } else {
+                            // Alert to failure
+                            alert(json.data);
                         }
+                        // if (json.success == "success")
+                        // {
+                        //     // Clear Form
+                        //     $("#eventName").val("");
+                        //     $("#eventVenue").val("");
+                        //     $("#location").val("");
+                        //     $("#squadm").val("null");
+                        //     $("#datepicker").val("");
+                        //     $("#datepicker2").val("");
+                        //     $("#website").val("");
+                        //     $("#numberOfAttend").val("");
+                        //     $("#requestedNumber").val("");
+                        //     $("#requestedCharacter").val("");
+                        //     $("#secure").val("null");
+                        //     $("#blasters").val("null");
+                        //     $("#lightsabers").val("null");
+                        //     $("#parking").val("null");
+                        //     $("#mobility").val("null");
+                        //     $("#amenities").val("");
+                        //     $("#comments").val("");
+                        //     $("#label").val("null");
+                        //     $("#limitedEvent").val("0");
+                        //     $("#limit501st").val("500");
+                        //     $("[name=smileyarea]").html("");
+                        //     $("#postToBoards").val(1);
+
+                        //     // Loop through clubs
+                        //     for(var i = 0; i <= (clubArray.length - 1); i++)
+                        //     {
+                        //         $("#" + clubArray[i]).val(500);
+                        //     }
+
+                        //     $("#referred").val("");
+						// 	$("#poc").val("");
+                        //     $("#options").show();
+
+                        //     // Remove all shift boxes
+                        //     $("div[name*='pair']").each(function()
+                        //     {
+                        //         $(this).remove();
+                        //     });
+							
+						// 	// Set event link
+						// 	$("#create_event_area").html('<p><a href="index.php?event=' + json.eventid + '" class="button">View Posted Event</a>');
+                        // }
 
                         // Alert to success
-                        alert(json.data);
+                        // alert(json.data);
                     }
                 });
             }
