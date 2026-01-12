@@ -256,20 +256,26 @@ class QueryLoggerStatement
     }
 
     /**
+     * Explicit bind_param - critical for proper reference handling
+     */
+    public function bind_param($types, &...$vars)
+    {
+        return $this->stmt->bind_param($types, ...$vars);
+    }
+
+    /**
+     * Explicit bind_result - critical for proper reference handling
+     */
+    public function bind_result(&...$vars)
+    {
+        return $this->stmt->bind_result(...$vars);
+    }
+
+    /**
      * Pass through all other method calls to the wrapped statement
      */
     public function __call($method, $args)
     {
-        // Special handling for bind_param and bind_result to preserve references
-        if ($method === 'bind_param' || $method === 'bind_result') {
-            // Convert args to references if needed
-            $refs = [];
-            foreach ($args as $key => $value) {
-                $refs[$key] = &$args[$key];
-            }
-            return call_user_func_array([$this->stmt, $method], $refs);
-        }
-
         return call_user_func_array([$this->stmt, $method], $args);
     }
 

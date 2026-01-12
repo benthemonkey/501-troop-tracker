@@ -11,7 +11,7 @@ session_start();
  */
 
 // Suppress warnings in production (set to E_ALL for development)
-error_reporting(E_ERROR | E_PARSE);
+// error_reporting(E_ERROR | E_PARSE);
 
 // Set time zone
 date_default_timezone_set("America/New_York");
