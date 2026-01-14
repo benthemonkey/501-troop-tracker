@@ -652,7 +652,8 @@ table[name*="comment_"] textarea {
 	overflow: hidden;
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: center;
+	justify-content: flex-start;
+	align-items: center;
 	/* Centers the buttons */
 	align-items: center;
 	/* Vertically center them (optional) */
@@ -660,6 +661,28 @@ table[name*="comment_"] textarea {
 	border-radius: 8px;
 	text-align: center;
 	box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Logo and title container in navigation */
+.topnav-logo-container {
+	display: flex;
+	align-items: center;
+	padding: 8px 16px;
+	margin-right: 20px;
+	color: white;
+}
+
+.topnav-logo {
+	height: 40px;
+	width: auto;
+	margin-right: 10px;
+}
+
+.topnav-title {
+	font-size: 20px;
+	font-weight: 600;
+	color: white;
+	white-space: nowrap;
 }
 
 /* Style the links inside the navigation bar */
@@ -708,6 +731,19 @@ table[name*="comment_"] textarea {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
+	}
+
+	.topnav-logo-container {
+		padding: 8px 10px;
+		margin-right: 10px;
+	}
+
+	.topnav-logo {
+		height: 30px;
+	}
+
+	.topnav-title {
+		font-size: 16px;
 	}
 
 	.topnav a {

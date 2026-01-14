@@ -202,13 +202,14 @@ echo '
 <body class="' . myTheme() . '">
 
 <div class="tm-container">
-<div class="tm-text-white tm-page-header-container">
-	<img src="images/logo.png" />
-</div>
 <div class="tm-main-content">
 <section class="tm-section">
 
 <div class="topnav" id="myTopnav">
+<div class="topnav-logo-container">
+	<img src="images/logo.png" class="topnav-logo" />
+    <span class="topnav-title">Troop Tracker</span>
+</div>
 <a href="index.php" ' . isPageActive("home") . '>Home</a>
 <a href="' . $forumURL . '">Forums</a>';
 
@@ -2213,12 +2214,12 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 		<p>
 			<a href="index.php?action=commandstaff&do=createevent" class="button">Create an Event</a> 
 			<a href="index.php?action=commandstaff&do=editevent" class="button">Edit an Event</a> 
-			<a href="index.php?action=commandstaff&do=eventlinkmanager" class="button">Event Link Manager</a> 
 			<a href="index.php?action=commandstaff&do=roster" class="button">Roster</a> 
 			<a href="index.php?action=commandstaff&do=notifications" class="button">Notifications</a>';
 
         if (hasPermission(1)) {
-            echo ' 
+            echo '
+                <a href="index.php?action=commandstaff&do=eventlinkmanager" class="button">Event Link Manager</a>
 				<a href="index.php?action=commandstaff&do=managecostumes" class="button">Costume Management</a> 
 				<a href="index.php?action=commandstaff&do=managetroopers" class="button">Trooper Management</a> 
 				<a href="index.php?action=commandstaff&do=assignawards" class="button">Award Management</a>
