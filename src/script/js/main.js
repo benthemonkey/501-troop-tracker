@@ -3274,10 +3274,21 @@ $(document).ready(function () {
 				// Set
 				$("#location").val(address);
 			}
+			
+			const formats = [
+				'M/D/YYYY h:mm a',
+				'M/D/YYYY h:mma',
+				'M/D/YYYY h a',
+				'M/D/YYYY ha',
+				'M/D/YY h:mm a',
+				'M/D/YY h:mma',
+				'M/D/YY h a',
+				'M/D/YY ha',
+			];
 
 			// Date Start
 			if (line.includes("Event Start:")) {
-				$("#datepicker").val(moment(line.split("Event Start:")[1].trim(), 'MM/DD/YYYY h:mm a').format('MM/DD/YYYY HH:mm'));
+				$("#datepicker").val(moment(line.split("Event Start:")[1].trim(), formats, true).format('MM/DD/YYYY HH:mm'));
 
 				// Check if date is invalid
 				if ($("#datepicker").val() == "Invalid date") {
@@ -3291,7 +3302,7 @@ $(document).ready(function () {
 
 			// Date Start
 			if (line.includes("Event End:")) {
-				$("#datepicker2").val(moment(line.split("Event End:")[1].trim(), 'MM/DD/YYYY h:mm a').format('MM/DD/YYYY HH:mm'));
+				$("#datepicker2").val(moment(line.split("Event End:")[1].trim(), formats, true).format('MM/DD/YYYY HH:mm'));
 
 				// Check if date is invalid
 				if ($("#datepicker2").val() == "Invalid date") {
