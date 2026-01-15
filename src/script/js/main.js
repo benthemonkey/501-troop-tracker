@@ -1,3 +1,6 @@
+// disable dropzone autodiscover
+window.Dropzone.autoDiscover = false;
+
 // Add methods to validator
 jQuery.validator.addMethod("noSpace", function (value, element) {
 	return value.trim().replace(/[\t\n]+/g, ' ').length > 1;
@@ -289,7 +292,7 @@ $(document).ready(function () {
     $("#datepicker3").flatpickr();
     $("#datepicker4").flatpickr();
 	
-	if (firstDatePicker) {
+	if (firstDatePicker?.length) {
 		firstDatePicker.set("onChange", function(selectedDates) {
 			// Only allow one day option
 			const fp = $("#datepicker2").flatpickr();
@@ -299,10 +302,8 @@ $(document).ready(function () {
 	}
 	
 	// Check for Dropzone and load it
-	if ($('.dropzone').length) {
-		window.Dropzone.autoDiscover = false;
-					  
-		var myDropzone = new window.Dropzone(".dropzone", { 
+	if ($('.dropzone').length) {  
+		new window.Dropzone(".dropzone", { 
 			maxFilesize: 10,
 			acceptedFiles: ".jpeg,.jpg,.png,.gif",
 			dictDefaultMessage: "Drop images here",
