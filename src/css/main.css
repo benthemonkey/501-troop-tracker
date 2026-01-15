@@ -399,7 +399,7 @@ textarea {
 	border-radius: 4px;
 	box-sizing: border-box;
 	resize: vertical;
-	color: var(--select-text-color) !important;
+	color: var(--select-text-color);
 }
 
 input[type=password],
@@ -412,7 +412,7 @@ textarea {
 	border-radius: 4px;
 	box-sizing: border-box;
 	resize: vertical;
-	color: var(--select-text-color) !important;
+	color: var(--select-text-color);
 }
 
 /* Style the label to display next to the inputs */
