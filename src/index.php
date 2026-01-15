@@ -6731,7 +6731,7 @@ echo '
 
 echo '
 <!-- External JS File -->
-<script type="text/javascript" src="script/js/main.js?v=10"></script>
+<script type="text/javascript" src="script/js/main.js?v=11"></script>
 </body>
 </html>';
 
