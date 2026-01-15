@@ -683,6 +683,8 @@ table[name*="comment_"] textarea {
 	font-weight: 600;
 	color: white;
 	white-space: nowrap;
+	/* a little push to center the text */
+	padding-bottom: 3px;
 }
 
 /* Style the links inside the navigation bar */
