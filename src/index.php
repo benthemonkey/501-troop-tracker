@@ -56,7 +56,7 @@ echo '
 
 echo '
 	<!-- Style Sheets -->
-	<link href="css/main.css?v=2" rel="stylesheet" />
+	<link href="css/main.css?v=3" rel="stylesheet" />
 	<link rel="stylesheet" href="script/lib/jquery-ui.min.css">
 	<link rel="stylesheet" href="script/lib/jquery-ui-timepicker-addon.css">
 	<link href="css/dropzone.min.css" type="text/css" rel="stylesheet" />
