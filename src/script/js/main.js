@@ -277,7 +277,24 @@ function selectAdd() {
 	}
 }
 
+flatpickr.setDefaults({
+	enableTime: true,
+	allowInput: true,
+	dateFormat: "m/d/Y H:i"
+});
+
 $(document).ready(function () {
+    $("#datepicker").flatpickr().set("onChange", function(selectedDates) {
+        // Only allow one day option
+        debugger;
+        const fp = $("#datepicker2").flatpickr();
+        fp.set("minDate", moment(selectedDates[0]).format("MM/DD/YYYY H:mm"));
+        fp.set("maxDate", moment(selectedDates[0]).endOf("day").format("MM/DD/YYYY H:mm"));
+    });
+    $("#datepicker2").flatpickr();
+    $("#datepicker3").flatpickr();
+    $("#datepicker4").flatpickr();
+	
 	// Add select2 to DOM
 	selectAdd();
 
@@ -809,21 +826,27 @@ $(document).ready(function () {
 	// Add shift
 	$("body").on("click", "#addshift", function (e) {
 		e.preventDefault();
+		
+		const thisShift = shifts;
 
 		// Add input
 		$("#datetimeadd").append('<div id="pair' + pair + '" name="pair' + pair + '"><hr /><input type="hidden" name="shiftpost' + pair + '" value="' + pair + '" /><p>Date/Time Start:</p> <input type="text" name="adddateStart' + pair + '" id="datepicker' + (shifts + 1) + '" shifts1="' + (shifts + 1) + '" shifts2="' + (shifts + 2) + '" /> <p>Date/Time End:</p> <input type="text" name="adddateEnd' + pair + '" id="datepicker2' + (shifts + 2) + '" shifts1="' + (shifts + 1) + '" shifts2="' + (shifts + 2) + '" /> <input type="submit" name="removeshift" pair="' + pair + '" value="Remove Shift" /></div>');
 
 		// Make date/time object
-		$("#datepicker" + (shifts + 1)).datetimepicker();
-		$("#datepicker2" + (shifts + 2)).datetimepicker();
+		$("#datepicker" + (shifts + 1)).flatpickr({onChange: function(selectedDates) {
+			const selectedMoment = moment(selectedDates[0]);
+			const fp = $("#datepicker2" + (thisShift + 2)).flatpickr();
+			
+			// only allow one day
+			fp.set('minDate', selectedMoment.format('MM/DD/YYYY H:mm'));
+			fp.set('maxDate', moment(selectedMoment).endOf('day').format('MM/DD/YYYY H:mm'));
 
-		// Only allow one day
-		$("#datepicker" + (shifts + 1)).on("change", function () {
-			// Only allow one day option
-			$("#datepicker2" + $(this).attr("shifts2")).datetimepicker("option", "minDate", moment(new Date($("#datepicker" + $(this).attr("shifts1")).val())).format('MM/DD/YYYY'));
-			$("#datepicker2" + $(this).attr("shifts2")).datetimepicker("option", "maxDate", moment(new Date($("#datepicker" + $(this).attr("shifts1")).val())).format('MM/DD/YYYY'));
-			$("#datepicker2" + $(this).attr("shifts2")).datetimepicker("option", "minTime", moment(new Date($("#datepicker" + $(this).attr("shifts1")).val())).format('H:mm'));
-		});
+			// if "end time" is before "start time", set it to one hour after
+			if (moment(fp.selectedDates[0], 'MM/DD/YYYY H:mm').isBefore(selectedMoment)) {
+				fp.setDate(moment(selectedMoment).add(1, 'hours').format('MM/DD/YYYY H:mm'));
+			}
+		}});
+		$("#datepicker2" + (shifts + 2)).flatpickr();
 
 		// Increment
 		shifts += 2;
@@ -1437,8 +1460,8 @@ $(document).ready(function () {
 					$("#locationChangeCheck").val(json.location);	// Used to check against to see if the location changed for map
 					$("#location").val(json.location);
 					$("#squadm").val(json.squad);
-					$("#datepicker").datetimepicker("setDate", moment(json.dateStart).format('MM/DD/YYYY H:mm'));
-					$("#datepicker2").datetimepicker("setDate", moment(json.dateEnd).format('MM/DD/YYYY H:mm'));
+					$("#datepicker").flatpickr().setDate(date1, true);
+					$("#datepicker2").flatpickr().setDate(date2);
 					$("#website").val(json.website);
 					$("#numberOfAttend").val(json.numberOfAttend);
 					$("#requestedNumber").val(json.requestedNumber);
@@ -1458,11 +1481,6 @@ $(document).ready(function () {
 					$("#limitTotalTroopers").val(json.limitTotalTroopers);
 					$("#friendLimit").val(json.friendLimit);
 					$("#allowTentative").val(json.allowTentative);
-
-					// Update date picker rules for edit
-					$("#datepicker2").datetimepicker("option", "minDate", moment(json.dateStart).format('MM/DD/YYYY'));
-					$("#datepicker2").datetimepicker("option", "maxDate", moment(json.dateStart).format('MM/DD/YYYY'));
-					$("#datepicker2").datetimepicker("option", "minTime", moment(json.dateStart).format('H:mm'));
 
 					// Loop through clubs
 					for (var i = 0; i <= (clubArray.length - 1); i++) {
@@ -2324,12 +2342,12 @@ $(document).ready(function () {
 	// End Modify Sign Up Form Change
 
 	// If date picker (first option) is changed
-	$("#datepicker").on("change", function () {
-		// Only allow one day option
-		$("#datepicker2").datetimepicker("option", "minDate", moment(new Date($("#datepicker").val())).format('MM/DD/YYYY'));
-		$("#datepicker2").datetimepicker("option", "maxDate", moment(new Date($("#datepicker").val())).format('MM/DD/YYYY'));
-		$("#datepicker2").datetimepicker("option", "minTime", moment(new Date($("#datepicker").val())).format('H:mm'));
-	});
+	// $("#datepicker").on("change", function () {
+	// 	// Only allow one day option
+	// 	$("#datepicker2").datetimepicker("option", "minDate", moment(new Date($("#datepicker").val())).format('MM/DD/YYYY'));
+	// 	$("#datepicker2").datetimepicker("option", "maxDate", moment(new Date($("#datepicker").val())).format('MM/DD/YYYY'));
+	// 	$("#datepicker2").datetimepicker("option", "minTime", moment(new Date($("#datepicker").val())).format('H:mm'));
+	// });
 
 	// When command staff event select box is changed
 	$("#eventId").on("change", function () {
@@ -3288,12 +3306,14 @@ $(document).ready(function () {
 
 			// Date Start
 			if (line.includes("Event Start:")) {
-				$("#datepicker").val(moment(line.split("Event Start:")[1].trim(), formats, true).format('MM/DD/YYYY HH:mm'));
-
+				const date = moment(line.split("Event Start:")[1].trim(), formats, true);
+				
 				// Check if date is invalid
-				if ($("#datepicker").val() == "Invalid date") {
+				if (date.isValid()) {
+					$("#datepicker").flatpickr().setDate(date.format('MM/DD/YYYY HH:mm'));
+				} else {
 					// Make date fields blank
-					$("#datepicker").val("");
+					$("#datepicker").flatpickr().clear();
 
 					// Add to message
 					error += "-Date Start is invalid\n";
@@ -3302,12 +3322,14 @@ $(document).ready(function () {
 
 			// Date Start
 			if (line.includes("Event End:")) {
-				$("#datepicker2").val(moment(line.split("Event End:")[1].trim(), formats, true).format('MM/DD/YYYY HH:mm'));
-
+				const date = moment(line.split("Event End:")[1].trim(), formats, true);
+				
 				// Check if date is invalid
-				if ($("#datepicker2").val() == "Invalid date") {
+				if (date.isValid()) {
+					$("#datepicker2").flatpickr().setDate(date.format('MM/DD/YYYY HH:mm'));
+				} else {
 					// Make date fields blank
-					$("#datepicker2").val("");
+					$("#datepicker2").flatpickr().clear();
 
 					// Add to message
 					error += "-Date End is invalid\n";

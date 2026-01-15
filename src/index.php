@@ -63,140 +63,12 @@ echo '
 	<link href="css/lightbox.min.css" rel="stylesheet" />
 	<link href="css/calendar.css" rel="stylesheet" />
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
 	<link rel="stylesheet" href="https://unpkg.com/balloon-css/balloon.min.css">
 	
 	<!-- Icon -->
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
-	
-	<!-- Setup Variable -->
-	<script>
-	var forumURL = "' . $forumURL . '";
-	var placeholder = ' . placeholder . ';
-	var squadIDList = ' . json_encode(array_merge([0], array_column($squadArray, 'squadID'))) . ';
-	var clubArray = [';
-
-/* CHECK IF MEMBER CLUB DB VALUE */
-
-// Club count
-$clubCount = count($clubArray);
-
-// Club step
-$i = 0;
-
-// Loop through clubs
-foreach ($clubArray as $club => $club_value) {
-    echo '"' . $club_value['db'] . '"';
-
-    // Add comma
-    if ($i < ($clubCount - 1)) {
-        echo ',';
-    }
-
-    // Increment
-    $i++;
-}
-
-echo '];';
-
-/* DB LIMIT CLUBS */
-
-// Club step
-$i = 0;
-
-echo '
-	var clubDBLimitArray = [';
-
-// Loop through clubs
-foreach ($clubArray as $club => $club_value) {
-    echo '"' . $club_value['dbLimit'] . '"';
-
-    // Add comma
-    if ($i < ($clubCount - 1)) {
-        echo ',';
-    }
-
-    // Increment
-    $i++;
-}
-
-echo '];';
-
-/* CLUB SPECIAL FORUM VALUE */
-
-// Club count with value
-$clubCount = array_filter($clubArray, function ($x) {
-    return !empty($x['db3Name']); });
-
-// Club step
-$i = 0;
-
-echo '
-	var clubDB3Array = [';
-
-// Loop through clubs
-foreach ($clubArray as $club => $club_value) {
-    // Don't allow empty result
-    if ($club_value['db3Name'] != "") {
-        echo '"' . $club_value['db3'] . '"';
-
-        // Add comma
-        if ($i < count($clubCount) - 1) {
-            echo ',';
-        }
-
-        // Increment
-        $i++;
-    }
-}
-
-echo '];';
-
-echo '
-	// Clear limits
-	function clearLimit()
-	{';
-
-// Loop through clubs
-foreach ($clubArray as $club => $club_value) {
-    echo '
-		$("#' . $club_value['dbLimit'] . '").val(500);';
-}
-
-echo '
-	}
-	</script>
-
-	<!-- JQUERY -->
-	<script src="script/lib/jquery-3.4.1.min.js"></script>
-
-	<!-- JQUERY UI -->
-	<script src="script/lib/jquery-ui.min.js"></script>
-
-	<!-- JQUERY SELECT -->
-	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-	<!-- Addons -->
-	<script src="script/lib/jquery-ui-timepicker-addon.js"></script>
-	<script src="script/js/validate/jquery.validate.min.js"></script>
-	<script src="script/js/validate/additional-methods.min.js"></script>
-	<script src="script/js/validate/validate.js?v=4"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
-	
-	<!-- Drop Zone -->
-	<script src="script/lib/dropzone.min.js"></script>
-	
-	<!-- LightBox -->
-	<script src="script/lib/lightbox.min.js"></script>
-
-	<script>
- 	$(function() {
-		$("#datepicker").datetimepicker();
-		$("#datepicker2").datetimepicker();
-		$("#datepicker3").datetimepicker();
-		$("#datepicker4").datetimepicker();
-	});
-	</script>
 </head>
 
 <body class="' . myTheme() . '">
@@ -1031,9 +903,9 @@ if (isset($_GET['action']) && $_GET['action'] == "search") {
     }
 
     echo '
-			Date Start: <input type="text" name="dateStart" id="datepicker3" value="' . (!isset($_POST['dateStart']) ? '' : cleanInput($_POST['dateStart'])) . '" />
+			Date Start: <input type="text" name="dateStart" id="datepicker3" autocomplete="off" value="' . (!isset($_POST['dateStart']) ? '' : cleanInput($_POST['dateStart'])) . '" />
 			<br /><br />
-			Date End: <input type="text" name="dateEnd" id="datepicker4" value="' . (!isset($_POST['dateEnd']) ? '' : cleanInput($_POST['dateEnd'])) . '" />
+			Date End: <input type="text" name="dateEnd" id="datepicker4" autocomplete="off" value="' . (!isset($_POST['dateEnd']) ? '' : cleanInput($_POST['dateEnd'])) . '" />
 			<br /><br />';
 
     // Get our search type, and show certain fields
@@ -3823,10 +3695,10 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 						</select>		
 
 						<p>Date/Time Start:</p>
-						<input type="text" name="dateStart" id="datepicker" />
+						<input type="text" name="dateStart" id="datepicker" autocomplete="off" />
 
 						<p>Date/Time End:</p>
-						<input type="text" name="dateEnd" id="datepicker2" />
+						<input type="text" name="dateEnd" id="datepicker2" autocomplete="off" />
 						
 						<div name="datetimeadd" id="datetimeadd"></div>
 						
@@ -4549,10 +4421,10 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 				</select>
 
 				<p>Date/Time Start:</p>
-				<input type="text" name="dateStart" id="datepicker" value="' . copyEvent($eid, $dateStart) . '" />
+				<input type="text" name="dateStart" id="datepicker" value="' . copyEvent($eid, $dateStart) . '" autocomplete="off" />
 
 				<p>Date/Time End:</p>
-				<input type="text" name="dateEnd" id="datepicker2" value="' . copyEvent($eid, $dateEnd) . '" />
+				<input type="text" name="dateEnd" id="datepicker2" value="' . copyEvent($eid, $dateEnd) . '" autocomplete="off" />
 				
 				<div name="datetimeadd" id="datetimeadd"></div>
 				
@@ -6708,6 +6580,128 @@ if (loggedIn() && discordInviteLink != '') {
 echo '
 </p>
 </section>
+
+<!-- Setup Variable -->
+<script>
+var forumURL = "' . $forumURL . '";
+var placeholder = ' . placeholder . ';
+var squadIDList = ' . json_encode(array_merge([0], array_column($squadArray, 'squadID'))) . ';
+var clubArray = [';
+
+/* CHECK IF MEMBER CLUB DB VALUE */
+
+// Club count
+$clubCount = count($clubArray);
+
+// Club step
+$i = 0;
+
+// Loop through clubs
+foreach ($clubArray as $club => $club_value) {
+    echo '"' . $club_value['db'] . '"';
+
+    // Add comma
+    if ($i < ($clubCount - 1)) {
+        echo ',';
+    }
+
+    // Increment
+    $i++;
+}
+
+echo '];';
+
+/* DB LIMIT CLUBS */
+
+// Club step
+$i = 0;
+
+echo '
+	var clubDBLimitArray = [';
+
+// Loop through clubs
+foreach ($clubArray as $club => $club_value) {
+    echo '"' . $club_value['dbLimit'] . '"';
+
+    // Add comma
+    if ($i < ($clubCount - 1)) {
+        echo ',';
+    }
+
+    // Increment
+    $i++;
+}
+
+echo '];';
+
+/* CLUB SPECIAL FORUM VALUE */
+
+// Club count with value
+$clubCount = array_filter($clubArray, function ($x) {
+    return !empty($x['db3Name']); });
+
+// Club step
+$i = 0;
+
+echo '
+	var clubDB3Array = [';
+
+// Loop through clubs
+foreach ($clubArray as $club => $club_value) {
+    // Don't allow empty result
+    if ($club_value['db3Name'] != "") {
+        echo '"' . $club_value['db3'] . '"';
+
+        // Add comma
+        if ($i < count($clubCount) - 1) {
+            echo ',';
+        }
+
+        // Increment
+        $i++;
+    }
+}
+
+echo '];';
+
+echo '
+	// Clear limits
+	function clearLimit()
+	{';
+
+// Loop through clubs
+foreach ($clubArray as $club => $club_value) {
+    echo '
+		$("#' . $club_value['dbLimit'] . '").val(500);';
+}
+
+echo '
+}
+</script>
+
+<!-- JQUERY -->
+<script src="script/lib/jquery-3.4.1.min.js"></script>
+
+<!-- JQUERY UI -->
+<script src="script/lib/jquery-ui.min.js"></script>
+
+<!-- JQUERY SELECT -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<!-- Addons -->
+<!-- <script src="script/lib/jquery-ui-timepicker-addon.js"></script> -->
+<script src="script/js/validate/jquery.validate.min.js"></script>
+<script src="script/js/validate/additional-methods.min.js"></script>
+<script src="script/js/validate/validate.js?v=4"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gasparesganga-jquery-loading-overlay@2.1.7/dist/loadingoverlay.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+
+<!-- Drop Zone -->
+<script src="script/lib/dropzone.min.js"></script>
+
+<!-- LightBox -->
+<script src="script/lib/lightbox.min.js"></script>
 
 <script>
 $(document).ready(function()
