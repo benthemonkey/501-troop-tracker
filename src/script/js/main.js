@@ -286,7 +286,6 @@ flatpickr.setDefaults({
 $(document).ready(function () {
     $("#datepicker").flatpickr().set("onChange", function(selectedDates) {
         // Only allow one day option
-        debugger;
         const fp = $("#datepicker2").flatpickr();
         fp.set("minDate", moment(selectedDates[0]).format("MM/DD/YYYY H:mm"));
         fp.set("maxDate", moment(selectedDates[0]).endOf("day").format("MM/DD/YYYY H:mm"));
