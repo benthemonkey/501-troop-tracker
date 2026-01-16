@@ -147,6 +147,82 @@ class QueryLogger extends mysqli
     }
 
     /**
+     * Get top N most duplicated queries
+     *
+     * @param int $limit Number of query types to return
+     * @return array Top duplicated queries with count and total time
+     */
+    public function getTopDuplicatedQueries($limit = 5)
+    {
+        $queryGroups = [];
+
+        // Group queries by normalized query string (remove parameter values)
+        foreach ($this->queryTimes as $queryData) {
+            $normalized = $this->normalizeQuery($queryData['query']);
+
+            if (!isset($queryGroups[$normalized])) {
+                $queryGroups[$normalized] = [
+                    'query' => $queryData['query'],
+                    'normalized' => $normalized,
+                    'count' => 0,
+                    'total_duration' => 0,
+                    'avg_duration' => 0,
+                    'callers' => []
+                ];
+            }
+
+            $queryGroups[$normalized]['count']++;
+            $queryGroups[$normalized]['total_duration'] += $queryData['duration'];
+
+            // Track unique callers
+            if (!in_array($queryData['backtrace'], $queryGroups[$normalized]['callers'])) {
+                $queryGroups[$normalized]['callers'][] = $queryData['backtrace'];
+            }
+        }
+
+        // Calculate averages and filter duplicates
+        $duplicates = [];
+        foreach ($queryGroups as $normalized => $data) {
+            if ($data['count'] > 1) { // Only include queries that were executed more than once
+                $data['avg_duration'] = $data['total_duration'] / $data['count'];
+                $duplicates[] = $data;
+            }
+        }
+
+        // Sort by count (most duplicated first)
+        usort($duplicates, function($a, $b) {
+            if ($b['count'] === $a['count']) {
+                // If count is same, sort by total duration
+                return $b['total_duration'] <=> $a['total_duration'];
+            }
+            return $b['count'] <=> $a['count'];
+        });
+
+        return array_slice($duplicates, 0, $limit);
+    }
+
+    /**
+     * Normalize query for duplicate detection
+     * Replaces numbers and strings with placeholders
+     *
+     * @param string $query Original query
+     * @return string Normalized query
+     */
+    private function normalizeQuery($query)
+    {
+        // Replace quoted strings with ?
+        $normalized = preg_replace("/'[^']*'/", '?', $query);
+
+        // Replace numbers with ?
+        $normalized = preg_replace('/\b\d+\b/', '?', $normalized);
+
+        // Replace multiple spaces with single space
+        $normalized = preg_replace('/\s+/', ' ', $normalized);
+
+        return trim($normalized);
+    }
+
+    /**
      * Log performance metrics at end of request
      */
     public function logPerformance()
@@ -173,7 +249,16 @@ class QueryLogger extends mysqli
                     'query' => substr($q['query'], 0, 200), // Truncate long queries
                     'caller' => $q['backtrace']
                 ];
-            }, $topQueries)
+            }, $topQueries),
+            'top_5_duplicated_queries' => array_map(function($q) {
+                return [
+                    'count' => $q['count'],
+                    'total_duration' => round($q['total_duration'], 4),
+                    'avg_duration' => round($q['avg_duration'], 4),
+                    'query' => substr($q['query'], 0, 200), // Truncate long queries
+                    'callers' => $q['callers']
+                ];
+            }, $this->getTopDuplicatedQueries(5))
         ];
 
         // Format log entry

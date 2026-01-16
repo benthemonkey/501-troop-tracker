@@ -4894,6 +4894,9 @@ if (isset($_GET['action']) && $_GET['action'] == "login" && !loggedIn()) {
                             $_SESSION['id'] = $db->id;
                             $_SESSION['tkid'] = $db->tkid;
 
+                            // PERFORMANCE: Initialize session cache for fast lookups
+                            initializeUserSessionCache();
+
                             // If logged in with forum details, and password does not match
                             if (isset($forumLogin['success']) && $forumLogin['success'] == 1) {
                                 // Update password, e-mail, and user ID
@@ -5071,6 +5074,9 @@ if (isset($_GET['action']) && $_GET['action'] == "setup" && !isSignUpClosed() &&
 
 // Show the logout page
 if (isset($_GET['action']) && $_GET['action'] == "logout") {
+    // PERFORMANCE: Clear session cache before destroying session
+    clearUserSessionCache();
+
     // Destroy session
     session_destroy();
 

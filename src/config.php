@@ -3,6 +3,18 @@
 // Start session
 session_start();
 
+// Initialize function-level caches (for performance optimization)
+$GLOBALS['_function_cache'] = [
+    'isAdmin' => null,
+    'getName' => [],
+    'getUserID' => [],
+    'getTrooperSquad' => [],
+    'getTrooperForum' => [],
+    'readTKNumber' => [],
+    '501st_costumes' => null,  // Cache entire 501st_costumes table
+    'troopers_club_ids' => []  // Cache club-specific IDs from troopers table
+];
+
 /**
  * This file is used for configuration and loading functions.
  *
@@ -3103,11 +3115,7 @@ function isImportant($value, $text)
 */
 function loggedIn()
 {
-	if(isset($_SESSION['id']))
-	{
-		return true;
-	}
-	return false;
+	return isset($_SESSION['id']);
 }
 
 /**
@@ -3686,12 +3694,23 @@ function readTKNumber($tkid, $squad, $trooperid)
 {
 	global $conn, $clubArray, $squadArray, $validSquadIDs;
 
+	// Create cache key from parameters
+	$cacheKey = "{$tkid}_{$squad}_{$trooperid}";
+
+	// Return cached value if available
+	if (isset($GLOBALS['_function_cache']['readTKNumber'][$cacheKey])) {
+		return $GLOBALS['_function_cache']['readTKNumber'][$cacheKey];
+	}
+
+	// Handle "Not Assigned" case
 	if ($tkid == 0 && in_array($squad, $validSquadIDs)) {
-		return "Not Assigned";
+		$result = "Not Assigned";
+		$GLOBALS['_function_cache']['readTKNumber'][$cacheKey] = $result;
+		return $result;
 	}
 
 	if (!in_array($squad, $validSquadIDs)) {
-		// Find the matching club by squadID
+		// Handle club members (Rebel Legion, etc.)
 		$club = null;
 		foreach ($clubArray as $c) {
 			if ((int)$c['squadID'] === (int)$squad) {
@@ -3701,34 +3720,51 @@ function readTKNumber($tkid, $squad, $trooperid)
 		}
 
 		if ($club && !empty($club['db3'])) {
-			// Get club-specific ID from database
-			$statement = $conn->prepare("SELECT {$club['db3']} FROM troopers WHERE id = ?");
-			$statement->bind_param("i", $trooperid);
-			$statement->execute();
-			$statement->bind_result($clubID);
-			$statement->fetch();
-			$statement->close();
+			// Load club-specific ID from troopers table (with caching)
+			$clubFieldCacheKey = "{$club['db3']}_{$trooperid}";
 
-			return $club['db3Short'] . ': ' . $clubID;
+			if (!isset($GLOBALS['_function_cache']['troopers_club_ids'][$clubFieldCacheKey])) {
+				$statement = $conn->prepare("SELECT {$club['db3']} FROM troopers WHERE id = ?");
+				$statement->bind_param("i", $trooperid);
+				$statement->execute();
+				$statement->bind_result($clubID);
+				$statement->fetch();
+				$statement->close();
+
+				$GLOBALS['_function_cache']['troopers_club_ids'][$clubFieldCacheKey] = $clubID;
+			}
+
+			$clubID = $GLOBALS['_function_cache']['troopers_club_ids'][$clubFieldCacheKey];
+			$result = $club['db3Short'] . ': ' . $clubID;
 		} else {
-			return "Not Assigned";
+			$result = "Not Assigned";
 		}
+
+		$GLOBALS['_function_cache']['readTKNumber'][$cacheKey] = $result;
+		return $result;
 	} else {
-		// 501st member
-		$prefix = "TK";
+		// 501st member - load entire 501st_costumes table once
+		if ($GLOBALS['_function_cache']['501st_costumes'] === null) {
+			$GLOBALS['_function_cache']['501st_costumes'] = [];
 
-		$statement = $conn->prepare("SELECT prefix FROM 501st_costumes WHERE legionid = ? LIMIT 1");
-		$statement->bind_param("i", $tkid);
-		$statement->execute();
-		$statement->bind_result($getPrefix_value);
-		$statement->fetch();
-		$statement->close();
-
-		if (!empty($getPrefix_value)) {
-			$prefix = $getPrefix_value;
+			$result = $conn->query("SELECT legionid, prefix FROM 501st_costumes");
+			if ($result) {
+				while ($row = $result->fetch_assoc()) {
+					$GLOBALS['_function_cache']['501st_costumes'][$row['legionid']] = $row['prefix'];
+				}
+				$result->free();
+			}
 		}
 
-		return $prefix . $tkid;
+		// Look up prefix from cached table
+		$prefix = "TK";
+		if (isset($GLOBALS['_function_cache']['501st_costumes'][$tkid])) {
+			$prefix = $GLOBALS['_function_cache']['501st_costumes'][$tkid];
+		}
+
+		$result = $prefix . $tkid;
+		$GLOBALS['_function_cache']['readTKNumber'][$cacheKey] = $result;
+		return $result;
 	}
 }
 
@@ -3860,18 +3896,33 @@ function getIDFromTKNumber($tkid)
  * Returns squad of the trooper
  *
  * @param int $id ID of the trooper
- * @return int ID of the squad
+ * @return int|null ID of the squad or null
 */
 function getTrooperSquad($id)
 {
 	global $conn;
 
+	// Return cached value if available
+	if (isset($GLOBALS['_function_cache']['getTrooperSquad'][$id])) {
+		return $GLOBALS['_function_cache']['getTrooperSquad'][$id];
+	}
+
+	// Check session cache if this is the current user
+	if (isset($_SESSION['id']) && $_SESSION['id'] == $id && isset($_SESSION['_cache']['squad'])) {
+		$GLOBALS['_function_cache']['getTrooperSquad'][$id] = $_SESSION['_cache']['squad'];
+		return $GLOBALS['_function_cache']['getTrooperSquad'][$id];
+	}
+
+	// Query database
 	$statement = $conn->prepare("SELECT squad FROM troopers WHERE id = ?");
 	$statement->bind_param("i", $id);
 	$statement->execute();
 	$statement->bind_result($value);
 	$statement->fetch();
 	$statement->close();
+
+	// Cache result
+	$GLOBALS['_function_cache']['getTrooperSquad'][$id] = $value;
 
 	return $value;
 }
@@ -3880,18 +3931,33 @@ function getTrooperSquad($id)
  * Returns forum username of trooper
  *
  * @param int $id ID of the trooper
- * @return string Forum username of the trooper
+ * @return string|null Forum username of the trooper or null
 */
 function getTrooperForum($id)
 {
 	global $conn;
 
+	// Return cached value if available
+	if (isset($GLOBALS['_function_cache']['getTrooperForum'][$id])) {
+		return $GLOBALS['_function_cache']['getTrooperForum'][$id];
+	}
+
+	// Check session cache if this is the current user
+	if (isset($_SESSION['id']) && $_SESSION['id'] == $id && isset($_SESSION['_cache']['forum_id'])) {
+		$GLOBALS['_function_cache']['getTrooperForum'][$id] = $_SESSION['_cache']['forum_id'];
+		return $GLOBALS['_function_cache']['getTrooperForum'][$id];
+	}
+
+	// Query database
 	$statement = $conn->prepare("SELECT forum_id FROM troopers WHERE id = ?");
 	$statement->bind_param("i", $id);
 	$statement->execute();
 	$statement->bind_result($value);
 	$statement->fetch();
 	$statement->close();
+
+	// Cache result
+	$GLOBALS['_function_cache']['getTrooperForum'][$id] = $value;
 
 	return $value;
 }
@@ -4439,18 +4505,33 @@ function timeBetweenDates($datetime1, $datetime2)
  * Return's the user's ID from Xenforo Forum
  *
  * @param int $id ID of the trooper
- * @return int Returns user ID from Xenforo Forum
+ * @return int|null Returns user ID from Xenforo Forum or null
 */
 function getUserID($id)
 {
 	global $conn;
 
+	// Return cached value if available
+	if (isset($GLOBALS['_function_cache']['getUserID'][$id])) {
+		return $GLOBALS['_function_cache']['getUserID'][$id];
+	}
+
+	// Check session cache if this is the current user
+	if (isset($_SESSION['id']) && $_SESSION['id'] == $id && isset($_SESSION['_cache']['user_id'])) {
+		$GLOBALS['_function_cache']['getUserID'][$id] = $_SESSION['_cache']['user_id'];
+		return $GLOBALS['_function_cache']['getUserID'][$id];
+	}
+
+	// Query database
 	$statement = $conn->prepare("SELECT user_id FROM troopers WHERE id = ?");
 	$statement->bind_param("i", $id);
 	$statement->execute();
 	$statement->bind_result($value);
 	$statement->fetch();
 	$statement->close();
+
+	// Cache result
+	$GLOBALS['_function_cache']['getUserID'][$id] = $value;
 
 	return $value;
 }
@@ -4479,18 +4560,33 @@ function getIDFromUserID($id)
  * Return's the troopers's name
  *
  * @param int $id ID of the trooper
- * @return string Returns trooper's name
+ * @return string|null Returns trooper's name or null
 */
 function getName($id)
 {
 	global $conn;
 
+	// Return cached value if available
+	if (isset($GLOBALS['_function_cache']['getName'][$id])) {
+		return $GLOBALS['_function_cache']['getName'][$id];
+	}
+
+	// Check session cache if this is the current user
+	if (isset($_SESSION['id']) && $_SESSION['id'] == $id && isset($_SESSION['_cache']['name'])) {
+		$GLOBALS['_function_cache']['getName'][$id] = $_SESSION['_cache']['name'];
+		return $GLOBALS['_function_cache']['getName'][$id];
+	}
+
+	// Query database
 	$statement = $conn->prepare("SELECT name FROM troopers WHERE id = ?");
 	$statement->bind_param("i", $id);
 	$statement->execute();
 	$statement->bind_result($value);
 	$statement->fetch();
 	$statement->close();
+
+	// Cache result
+	$GLOBALS['_function_cache']['getName'][$id] = $value;
 
 	return $value;
 }
@@ -5327,27 +5423,94 @@ function isAdmin()
 {
 	global $conn;
 
-	$isAdmin = false;
-
-	if(isset($_SESSION['id']))
-	{
-		$statement = $conn->prepare("SELECT permissions FROM troopers WHERE id = ?");
-		$statement->bind_param("i", $_SESSION['id']);
-		$statement->execute();
-
-		if ($result = $statement->get_result())
-		{
-			while ($db = mysqli_fetch_object($result))
-			{
-				if($db->permissions == 1 || $db->permissions == 2)
-				{
-					$isAdmin = true;
-				}
-			}
-		}
+	if (!isset($_SESSION['id'])) {
+		return false;
 	}
 
+	// Return cached value if available
+	if ($GLOBALS['_function_cache']['isAdmin'] !== null) {
+		return $GLOBALS['_function_cache']['isAdmin'];
+	}
+
+	// Check session cache first
+	if (isset($_SESSION['_cache']['is_admin'])) {
+		$GLOBALS['_function_cache']['isAdmin'] = $_SESSION['_cache']['is_admin'];
+		return $GLOBALS['_function_cache']['isAdmin'];
+	}
+
+	// Query database
+	$isAdmin = false;
+	$statement = $conn->prepare("SELECT permissions FROM troopers WHERE id = ?");
+	$statement->bind_param("i", $_SESSION['id']);
+	$statement->execute();
+
+	if ($result = $statement->get_result()) {
+		if ($db = mysqli_fetch_object($result)) {
+			$isAdmin = ($db->permissions == 1 || $db->permissions == 2);
+		}
+	}
+	$statement->close();
+
+	// Cache result
+	$GLOBALS['_function_cache']['isAdmin'] = $isAdmin;
+
+	// Also store in session cache
+	if (!isset($_SESSION['_cache'])) {
+		$_SESSION['_cache'] = [];
+	}
+	$_SESSION['_cache']['is_admin'] = $isAdmin;
+
 	return $isAdmin;
+}
+
+/**
+ * Initialize session cache for current user
+ * This should be called once after login to populate session cache
+ * PERFORMANCE OPTIMIZATION: Reduces database queries across requests
+*/
+function initializeUserSessionCache() {
+	global $conn;
+
+	if (!isset($_SESSION['id'])) {
+		return;
+	}
+
+	$userId = $_SESSION['id'];
+
+	// Fetch all user data in one query
+	$statement = $conn->prepare("
+		SELECT id, name, permissions, squad, user_id, forum_id
+		FROM troopers
+		WHERE id = ?
+	");
+	$statement->bind_param("i", $userId);
+	$statement->execute();
+
+	if ($result = $statement->get_result()) {
+		if ($db = mysqli_fetch_object($result)) {
+			// Store in session for fast access
+			$_SESSION['_cache'] = [
+				'name' => $db->name,
+				'permissions' => $db->permissions,
+				'squad' => $db->squad,
+				'user_id' => $db->user_id,
+				'forum_id' => $db->forum_id,
+				'is_admin' => ($db->permissions == 1 || $db->permissions == 2)
+			];
+		}
+	}
+	$statement->close();
+}
+
+/**
+ * Clear session cache
+ * Call this on logout or when user data changes
+ * PERFORMANCE OPTIMIZATION: Ensures cache doesn't have stale data
+*/
+function clearUserSessionCache() {
+	if (isset($_SESSION['_cache'])) {
+		unset($_SESSION['_cache']);
+	}
 }
 
 /**
@@ -6609,6 +6772,9 @@ if(!loggedIn() && !isset($_POST['loginWithTK']))
 					// Set session
 					$_SESSION['id'] = $db->id;
 					$_SESSION['tkid'] = $db->tkid;
+
+					// PERFORMANCE: Initialize session cache for fast lookups
+					initializeUserSessionCache();
 
 					// Set success
 					$failCheck = false;
