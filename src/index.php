@@ -4754,7 +4754,7 @@ if (isset($_GET['action']) && $_GET['action'] == "faq") {
 
 	<h3>I am missing troop data / My troop data is incorrect</h3>
 	<p>
-		Please refer to your squad leader to get this corrected.
+		Fill out the <a href="https://forms.gle/cS1dk7w3zjYuhbnz9" target="_blank"><u>Missing Troop Correction Form</u></a>
 	</p>
 	
 	<h3>I am now a member of another club and need access to their costumes.</h3>
@@ -6524,7 +6524,7 @@ Website created by <a href="https://mattdrennan.com">Matthew Drennan (TK52233)</
 </p>
 
 <p class="tm-mb-0">
-If you are missing troops or notice incorrect data, please refer to your squad leader.
+<a href="https://forms.gle/cS1dk7w3zjYuhbnz9" target="_blank"><u>Missing Troop Correction Form</u></a>
 </p>
 
 <p class="footer-icons">
