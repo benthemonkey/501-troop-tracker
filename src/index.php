@@ -173,18 +173,20 @@ if (loggedIn()) {
 
 		// Check if sticky threads exist and is an array
 		if(isset($threads['sticky']) && is_array($threads['sticky'])) {
-            echo '
-			<div class="box">
-				<div class="user">
-					<img src="' . $thread_value['User']['avatar_urls']['s'] . '" />
-					<br />
-					<a href="' . $thread_value['User']['view_url'] . '">' . $thread_value['User']['username'] . '</a>
-				</div>
-				
-				<div class="title">
-					<a href="' . $thread_value['view_url'] . '">' . $thread_value['title'] . '</a>
-				</div>
-			</div>';
+            foreach ($threads['sticky'] as $thread => $thread_value) {
+                echo '
+                <div class="box">
+                    <div class="user">
+                        <img src="' . $thread_value['User']['avatar_urls']['s'] . '" />
+                        <br />
+                        <a href="' . $thread_value['User']['view_url'] . '">' . $thread_value['User']['username'] . '</a>
+                    </div>
+                    
+                    <div class="title">
+                        <a href="' . $thread_value['view_url'] . '">' . $thread_value['title'] . '</a>
+                    </div>
+                </div>';
+            }
         }
 
         foreach ($threads['threads'] as $thread => $thread_value) {
@@ -6533,13 +6535,15 @@ echo '
 <section class="tm-section tm-section-small">
 <p class="tm-mb-0">
 Website created by <a href="https://mattdrennan.com">Matthew Drennan (TK52233)</a>. If you encounter any technical issues with this site, please refer to the <a href="index.php?action=faq">FAQ page</a> for guidance.
-</p>
+</p>';
 
-<p class="tm-mb-0">
-<a href="https://forms.gle/cS1dk7w3zjYuhbnz9" target="_blank"><u>Missing Troop Correction Form</u></a>
-</p>
+if (loggedIn()) {
+    echo '<p class="tm-mb-0">
+        <a href="https://forms.gle/cS1dk7w3zjYuhbnz9" target="_blank"><u>Missing Troop Correction Form</u></a>
+    </p>';
+}
 
-<p class="footer-icons">
+echo '<p class="footer-icons">
 	<a href="https://github.com/MattDrennan/501-troop-tracker" target="_blank"><img src="images/github.png" alt="GitHub" title="Help contribute to the Troop Tracker project!" /></a> ';
 // Discord
 if (loggedIn() && discordInviteLink != '') {

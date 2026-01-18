@@ -1,6 +1,6 @@
 .calendar{
     background: var(--main-content-color);
-    color: var(--primary-bg-color);
+    color: var(--primary-text-color);
     width:100%;
     font-family: 'Oxygen';
     table-layout:fixed;
