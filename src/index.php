@@ -54,12 +54,16 @@ echo '
 	<!-- Main Style Sheets -->
 	<link href="fontawesome/css/all.min.css" rel="stylesheet" />';
     
-// inject sentry JS early for error tracking
-if (isset($sentryDSN) && $sentryDSN != "") {
-    echo '<script
-        src="https://js.sentry-cdn.com/c770bd9c0944d8b9474b76ad63f3d60d.min.js"
-        crossorigin="anonymous"
-    ></script>';
+// inject sentry JS early for error tracking (served locally, not from CDN)
+if (isset($sentryJSDSN) && $sentryJSDSN != "") {
+    echo '<script src="script/lib/sbundle.min.js"></script>
+    <script>
+        // Configure Sentry tunnel to bypass ad blockers
+        Sentry.init({
+            dsn: "' . $sentryJSDSN . '",
+            tunnel: "' . $trackerURL . '/sentry-tunnel.php",
+        });
+    </script>';
 }
 
 echo '

@@ -48,9 +48,9 @@ $calendar = new Calendar();
 require 'cred.php';
 
 // Initialize Sentry for error monitoring (function_exists, NOT class_exists!)
-if (function_exists('\Sentry\init') && isset($sentryDSN) && !empty($sentryDSN)) {
+if (function_exists('\Sentry\init') && isset($sentryPHPDSN) && !empty($sentryPHPDSN)) {
     \Sentry\init([
-        'dsn' => $sentryDSN,
+        'dsn' => $sentryPHPDSN,
 
         // Set traces_sample_rate to 1.0 to capture 100% of transactions for performance monitoring.
         // We recommend adjusting this value in production (e.g., 0.1 for 10%)
