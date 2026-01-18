@@ -53,6 +53,14 @@ echo '
 	
 	<!-- Main Style Sheets -->
 	<link href="fontawesome/css/all.min.css" rel="stylesheet" />';
+    
+// inject sentry JS early for error tracking
+if (isset($sentryDSN) && $sentryDSN != "") {
+    echo '<script
+        src="https://js.sentry-cdn.com/c770bd9c0944d8b9474b76ad63f3d60d.min.js"
+        crossorigin="anonymous"
+    ></script>';
+}
 
 echo '
 	<!-- Style Sheets -->
@@ -6737,7 +6745,7 @@ echo '
 
 echo '
 <!-- External JS File -->
-<script type="text/javascript" src="script/js/main.js?v=13"></script>
+<script type="text/javascript" src="script/js/main.js?v=14"></script>
 </body>
 </html>';
 

@@ -3521,5 +3521,5 @@ $(document).ready(function () {
 			$("#easyfilltoolarea").hide();
 			$("#easyfilltoolbutton").text("Easy Fill Tool");
 		}
-	})
+	});
 });

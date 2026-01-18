@@ -47,6 +47,26 @@ $calendar = new Calendar();
 // Include credential file
 require 'cred.php';
 
+// Initialize Sentry for error monitoring (function_exists, NOT class_exists!)
+if (function_exists('\Sentry\init') && isset($sentryDSN) && !empty($sentryDSN)) {
+    \Sentry\init([
+        'dsn' => $sentryDSN,
+
+        // Set traces_sample_rate to 1.0 to capture 100% of transactions for performance monitoring.
+        // We recommend adjusting this value in production (e.g., 0.1 for 10%)
+        'traces_sample_rate' => 0.1,
+
+        // Set a sampling rate for profiling - this is relative to traces_sample_rate
+        'profiles_sample_rate' => 0.1,
+
+        // Capture environment
+        'environment' => 'production',
+    ]);
+} else {
+    // Sentry not available - log for debugging
+    error_log('Sentry SDK not loaded. Check if composer install was run.');
+}
+
 // Extract valid squadIDs from the array
 $validSquadIDs = array_merge([0], array_column($squadArray, 'squadID'));
 
