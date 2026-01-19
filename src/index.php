@@ -176,11 +176,11 @@ if (loggedIn()) {
             foreach ($threads['sticky'] as $thread => $thread_value) {
                 echo '
                 <div class="box">
-                    <div class="user">
+                    <!-- <div class="user">
                         <img src="' . $thread_value['User']['avatar_urls']['s'] . '" />
                         <br />
                         <a href="' . $thread_value['User']['view_url'] . '">' . $thread_value['User']['username'] . '</a>
-                    </div>
+                    </div> -->
                     
                     <div class="title">
                         <a href="' . $thread_value['view_url'] . '">' . $thread_value['title'] . '</a>
@@ -192,11 +192,11 @@ if (loggedIn()) {
         foreach ($threads['threads'] as $thread => $thread_value) {
             echo '
 			<div class="box">
-				<div class="user">
+				<!-- <div class="user">
 					<img src="' . $thread_value['User']['avatar_urls']['s'] . '" />
 					<br />
 					<a href="' . $thread_value['User']['view_url'] . '">' . $thread_value['User']['username'] . '</a>
-				</div>
+				</div> -->
 				
 				<div class="title">
 					<a href="' . $thread_value['view_url'] . '">' . $thread_value['title'] . '</a>
