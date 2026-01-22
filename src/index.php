@@ -122,7 +122,9 @@ if (!loggedIn()) {
     // If is admin
     if (isAdmin()) {
         echo '
-		<a href="index.php?action=commandstaff" ' . isPageActive("commandstaff") . '>Command Staff Portal</a>';
+		<a href="index.php?action=commandstaff" ' . isPageActive("commandstaff") . '>
+            ' . (hasPermission(1) ? 'Command Staff Portal' : 'Manage Events') . '
+        </a>';
     }
 
     echo '
@@ -2108,6 +2110,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
                 <a href="index.php?action=commandstaff&do=eventlinkmanager" class="button">Event Link Manager</a>
 				<a href="index.php?action=commandstaff&do=managecostumes" class="button">Costume Management</a> 
 				<a href="index.php?action=commandstaff&do=managetroopers" class="button">Trooper Management</a> 
+                <a href="index.php?action=commandstaff&do=approvetroopers" class="button" id="trooperRequestButton" name="trooperRequestButton">Approve Trooper Requests - (' . $getTrooperNotifications . ')</a> 
 				<a href="index.php?action=commandstaff&do=assignawards" class="button">Award Management</a>
 				<a href="index.php?action=commandstaff&do=stats" class="button">Statistics</a>
 			    <a href="index.php?action=commandstaff&do=sitesettings" class="button">Site Settings</a>';
