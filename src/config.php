@@ -232,7 +232,7 @@ function dailyTip()
 function loadSubscribeUpdates($event, $thread_id, $id)
 {
 	global $conn, $forumURL;
-	
+
 	// Query to see if trooper is subscribed
 	$statement = $conn->prepare("SELECT * FROM event_notifications WHERE trooperid = ? AND troopid = ?");
 	$statement->bind_param("ii", $id, $event);
@@ -248,7 +248,7 @@ function loadSubscribeUpdates($event, $thread_id, $id)
 	{
 		$subscribeText = "Unsubscribe Updates";
 	}
-	
+
 	// Create button variable
 	return '
 	<p style="text-align: center;">
@@ -260,11 +260,11 @@ function loadSubscribeUpdates($event, $thread_id, $id)
 function loadAddFriends($event, $id)
 {
 	global $conn, $dualCostume, $mainCostumes;
-	
+
 	$out = '
 	<form action="process.php?do=signup" method="POST" name="signupForm3" id="signupForm3">
 		<input type="hidden" name="event" value="'.cleanInput($event).'" />';
-			
+
 	// Load all users
 	$statement = $conn->prepare("SELECT troopers.id AS troopida, troopers.name AS troopername, troopers.tkid, troopers.squad FROM troopers WHERE NOT EXISTS (SELECT event_sign_up.trooperid FROM event_sign_up WHERE event_sign_up.trooperid = troopers.id AND event_sign_up.troopid = ? AND event_sign_up.trooperid != ".placeholder.") AND troopers.approved = 1 ORDER BY troopers.name");
 	$statement->bind_param("i", $event);
@@ -285,7 +285,7 @@ function loadAddFriends($event, $id)
 					<p>Select a trooper to add:</p>
 					<select name="trooperSelect" id="trooperSelect">';
 			}
-			
+
 			// Get TKID
 			$tkid = readTKNumber($db->tkid, $db->squad, $db->troopida);
 
@@ -305,10 +305,10 @@ function loadAddFriends($event, $id)
 	{
 		$out .= '
 		</select>
-		
+
 		<a href="#/" class="button" id="withoutAccount" aria-label="Once you add a friend without an account using placeholder. Click on the blank textbox on the roster to set a name. To save, click off to the side after writing the name." data-balloon-pos="down" data-balloon-length="fit">Add a friend without an account</a>';
 	}
-			
+
 	$out .= '
 	<p>What costume will they wear?</p>
 	<select name="costume" id="costume">
@@ -340,7 +340,7 @@ function loadAddFriends($event, $id)
 	{
 		$out .= '
 			<option value="0">I\'ll be there!</option>';
-			
+
 		// Check if tentative allowed
 		if(getEventColumn('allowTentative', cleanInput($event)) == 1)
 		{
@@ -351,7 +351,7 @@ function loadAddFriends($event, $id)
 	else
 	{
 		$out .= '
-		<option value="5">Request to attend (Pending)</option>';								
+		<option value="5">Request to attend (Pending)</option>';
 	}
 
 	$out .= '
@@ -391,7 +391,7 @@ function loadAddFriends($event, $id)
 
 	<input type="submit" value="Add Friend" name="submitSignUp" />
 	</form>';
-	
+
 	return $out;
 }
 
@@ -2788,6 +2788,14 @@ function squadToDiscord($squad)
 	{
 		return '<@&914344438472527912>';
 	}
+	else if($squad == 14)
+	{
+		return '<:mwgemoji:1374578817750007878>';
+	}
+	else if($squad == 15)
+	{
+		return '<:blurrg:1464074275743994030>';
+	}
 	else
 	{
 		return garrison;
@@ -2817,10 +2825,10 @@ function sendEventNotify($id, $name, $description, $squad)
 
 	$json_data = json_encode([
 	    // Message
-	    "content" => "".$name." has been added in ".squadToDiscord($squad).".",
+	    "content" => squadToDiscord($squad)." ".$name." has been added.",
 
 	    // Username
-	    "username" => "Event Bot",
+	    "username" => "Troop Tracker",
 
 	    // Text-to-speech
 	    "tts" => false,
