@@ -3780,7 +3780,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 						<a href="javascript:void(0);" onclick="javascript:bbcoder(\'COLOR\', \'comments\')" class="button">Color</a>
 						<a href="javascript:void(0);" onclick="javascript:bbcoder(\'SIZE\', \'comments\')" class="button">Size</a>
 						<a href="javascript:void(0);" onclick="javascript:bbcoder(\'URL\', \'comments\')" class="button">URL</a>
-						<a href="#/" class="button" name="addSmiley">Add Smiley</a>
+						<!-- <a href="#/" class="button" name="addSmiley">Add Smiley</a> -->
 						<textarea rows="10" cols="50" name="comments" id="comments"></textarea>
 
 						<span name="smileyarea" style="display: block;">
@@ -4511,7 +4511,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 				<a href="javascript:void(0);" onclick="javascript:bbcoder(\'COLOR\', \'comments\')" class="button">Color</a>
 				<a href="javascript:void(0);" onclick="javascript:bbcoder(\'SIZE\', \'comments\')" class="button">Size</a>
 				<a href="javascript:void(0);" onclick="javascript:bbcoder(\'URL\', \'comments\')" class="button">URL</a>
-				<a href="#/" class="button" name="addSmiley">Add Smiley</a>
+				<!-- <a href="#/" class="button" name="addSmiley">Add Smiley</a> -->
 				<textarea rows="10" cols="50" name="comments" id="comments">' . copyEvent($eid, $comments) . '</textarea>
 
 				<span name="smileyarea" style="display: block;">
@@ -4968,7 +4968,7 @@ if (isset($_GET['action']) && $_GET['action'] == "login" && !loggedIn()) {
 					</p>
 
 					<p>
-						If you are unable to access your account, please contact the ' . garrison . ' Webmaster, or post a help request on the forums. Your FL Garrison boards name may not match the Troop Tracker records.
+						If you haven\'t used the Troop Tracker before, you may need to <a href="index.php?action=requestaccess">Request Access</a>. If you are unable to access your account, please contact the ' . garrison . ' Webmaster, or post a help request on the forums. Your forum username may not match the Troop Tracker records.
 					</p>';
                 }
             }
@@ -5918,7 +5918,7 @@ if (isset($_GET['event']) && loggedIn()) {
 						<a href="javascript:void(0);" onclick="javascript:bbcoder(\'COLOR\', \'comment\')" class="button">Color</a>
 						<a href="javascript:void(0);" onclick="javascript:bbcoder(\'SIZE\', \'comment\')" class="button">Size</a>
 						<a href="javascript:void(0);" onclick="javascript:bbcoder(\'URL\', \'comment\')" class="button">URL</a>
-						<a href="#/" class="button" name="addSmiley">Add Smiley</a>
+						<!-- <a href="#/" class="button" name="addSmiley">Add Smiley</a> -->
 
 						<textarea cols="30" rows="10" name="comment" id="comment"></textarea>
 
