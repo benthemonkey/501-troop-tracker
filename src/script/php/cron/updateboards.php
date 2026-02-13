@@ -65,12 +65,12 @@ if ($result = mysqli_query($conn, $query))
 		// If a shift
 		if(isLink($db->id) > 0)
 		{
-			editThread($db->thread_id, date("m/d/y h:i A", strtotime($date1)) . " - " . date("h:i A", strtotime($date2)) . " " . readInput($db->name));
+			editThread($db->thread_id, date("Y/m/d h:i A", strtotime($date1)) . " - " . date("h:i A", strtotime($date2)) . " " . readInput($db->name));
 		}
 		else
 		{
 			// Not a shift
-			editThread($db->thread_id, date("m/d/y", strtotime($date1)) . " - " . readInput($db->name));
+			editThread($db->thread_id, date("Y/m/d", strtotime($date1)) . " - " . readInput($db->name));
 		}
 		
 		// Update post
