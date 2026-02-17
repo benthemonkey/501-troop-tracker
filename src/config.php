@@ -3778,7 +3778,10 @@ function readTKNumber($tkid, $squad, $trooperid)
 			$result = $conn->query("SELECT legionid, prefix FROM 501st_costumes");
 			if ($result) {
 				while ($row = $result->fetch_assoc()) {
-					$GLOBALS['_function_cache']['501st_costumes'][$row['legionid']] = $row['prefix'];
+					// only take first entry
+					if (!isset($GLOBALS['_function_cache']['501st_costumes'][$row['legionid']])) {
+						$GLOBALS['_function_cache']['501st_costumes'][$row['legionid']] = $row['prefix'];
+					}
 				}
 				$result->free();
 			}
