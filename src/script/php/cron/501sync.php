@@ -9,6 +9,11 @@
  * @author Matthew Drennan
  */
 
+if (php_sapi_name() !== 'cli') {
+    header('HTTP/1.0 403 Forbidden');
+    die('This script can only be run from the command line.');
+}
+
 // Include config
 include(dirname(__DIR__) . '/../../config.php');
 
