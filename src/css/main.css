@@ -327,15 +327,15 @@ a.button:hover {
 	background-color: var(--squad-link-color);
 }
 
-@media (min-width: 901px) {
+@media (min-width: 1101px) {
 	.tm-container {
 		width: 70%;
 	}
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1100px) {
 	.tm-container {
-		max-width: 900px;
+		max-width: 1100px;
 	}
 }
 
@@ -664,11 +664,17 @@ table[name*="comment_"] textarea {
 }
 
 /* Logo and title container in navigation */
-.topnav-logo-container {
+.topnav .topnav-logo-container {
 	display: flex;
 	align-items: center;
 	padding: 8px 16px;
 	margin-right: 20px;
+	color: white;
+	text-decoration: none;
+}
+
+.topnav .topnav-logo-container:hover {
+	background-color: transparent;
 	color: white;
 }
 
@@ -696,6 +702,7 @@ table[name*="comment_"] textarea {
 	padding: 14px 16px;
 	text-decoration: none;
 	font-size: 17px;
+	transition: none;
 }
 
 /* Change the color of links on hover */
@@ -727,7 +734,7 @@ table[name*="comment_"] textarea {
 	justify-content: center;
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 775px) {
 	.topnav {
 		position: relative;
 		display: flex;
@@ -738,6 +745,7 @@ table[name*="comment_"] textarea {
 	.topnav-logo-container {
 		padding: 8px 10px;
 		margin-right: 10px;
+		flex: 0 0 auto;
 	}
 
 	.topnav-logo {
@@ -756,10 +764,13 @@ table[name*="comment_"] textarea {
 		flex: 1 1 auto;
 	}
 
-	.topnav:not(.responsive) a:nth-child(n+3):not(.icon) {
+	.topnav:not(.responsive) a:not(.icon):not(.topnav-logo-container):not(.nav-mobile-show) {
 		display: none;
 	}
 
+	.topnav:not(.responsive) .nav-mobile-show {
+		margin-right: 56px;
+	}
 
 	.topnav a.icon {
 		display: block;

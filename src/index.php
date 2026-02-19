@@ -68,7 +68,7 @@ if (isset($sentryJSDSN) && $sentryJSDSN != "") {
 
 echo '
 	<!-- Style Sheets -->
-	<link href="css/main.css?v=3" rel="stylesheet" />
+	<link href="css/main.css?v=4" rel="stylesheet" />
 	<link rel="stylesheet" href="script/lib/jquery-ui.min.css">
 	<link rel="stylesheet" href="script/lib/jquery-ui-timepicker-addon.css">
 	<link href="css/dropzone.min.css" type="text/css" rel="stylesheet" />
@@ -90,10 +90,10 @@ echo '
 <section class="tm-section">
 
 <div class="topnav" id="myTopnav">
-<div class="topnav-logo-container">
+<a href="index.php" class="topnav-logo-container">
 	<img src="images/logo.png?v=1" class="topnav-logo" />
     <span class="topnav-title">Troop Tracker</span>
-</div>
+</a>
 <a href="index.php" ' . isPageActive("home") . '>Home</a>
 <a href="' . $forumURL . '">Forums</a>';
 
@@ -111,7 +111,7 @@ if (!loggedIn()) {
     }
 
     echo '
-	<a href="index.php?action=login" ' . isPageActive("login") . '>Login</a>';
+	<a href="index.php?action=login" class="nav-mobile-show' . (isPageActive("login") ? ' active' : '') . '">Login</a>';
 } else {
     // Logged in
     echo '
