@@ -4856,6 +4856,11 @@ if (isset($_GET['action']) && $_GET['action'] == "editphoto" && loggedIn()) {
 if (isset($_GET['action']) && $_GET['action'] == "login" && !loggedIn()) {
     echo '
 	<h2 class="tm-section-header">Login</h2>';
+    
+    echo '
+        <p style="text-align: center; border: dashed white;">
+            <a href="index.php?action=requestaccess">Are you new to the ' . garrison . ' and/or 501st? Or are you solely a member of another club? Click here.</a>
+        </p>';
 
     // Display submission for register account, otherwise show the form
     if (isset($_POST['loginWithTK'])) {
