@@ -5302,7 +5302,7 @@ if (isset($_GET['event']) && loggedIn()) {
 				<p><b>Amenities available at venue:</b> ' . ifEmpty($db->amenities, "No amenities for this event.") . '</p>
 				<p><b>Referred by:</b> ' . ifEmpty($db->referred, "Not available") . '</p>
 				' . (isAdmin() ? '<p><b>Point of Contact:</b> ' . ifEmpty($db->poc, "Not available") . '</p>' : '') . '
-			' . (isAdmin() ? '<p><b>Event Coordinator:</b> ' . ($db->createdBy ? getName($db->createdBy) : 'Not available') . '</p>' : '') . '';
+			' . (isAdmin() ? '<p><b>Event Coordinator:</b> ' . ($db->createdBy ? '<a href="index.php?profile=' . $db->createdBy . '">' . getName($db->createdBy) . '</a>' : 'Not available') . '</p>' : '') . '';
 
                 // If attached to a forum thread
                 if ($db->thread_id > 0) {
