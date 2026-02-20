@@ -3885,6 +3885,9 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 						<p>Point of Contact (Name & Contact):</p>
 						<input type="text" name="poc" id="poc" />
 
+						<p>Event Coordinator: <strong><span id="createdByDisplay"></span></strong></p>
+						<p><em>If the Event Coordinator needs to be changed, please contact the webmaster.</em></p>
+
 						<input type="submit" name="submitEventEdit" id="submitEventEdit" value="Edit!" />
 					</form>
 				</div>';
@@ -5298,7 +5301,8 @@ if (isset($_GET['event']) && loggedIn()) {
 				</div>
 				<p><b>Amenities available at venue:</b> ' . ifEmpty($db->amenities, "No amenities for this event.") . '</p>
 				<p><b>Referred by:</b> ' . ifEmpty($db->referred, "Not available") . '</p>
-				' . (isAdmin() ? '<p><b>Point of Contact:</b> ' . ifEmpty($db->poc, "Not available") . '</p>' : '') . '';
+				' . (isAdmin() ? '<p><b>Point of Contact:</b> ' . ifEmpty($db->poc, "Not available") . '</p>' : '') . '
+			' . (isAdmin() ? '<p><b>Event Coordinator:</b> ' . ($db->createdBy ? getName($db->createdBy) : 'Not available') . '</p>' : '') . '';
 
                 // If attached to a forum thread
                 if ($db->thread_id > 0) {
@@ -6141,7 +6145,7 @@ else if (isset($_GET['event']) && !loggedIn()) {
 
 						' . (!isset($_GET['squad']) || (isset($_GET['squad']) && $_GET['squad'] == "mytroops") || (isset($_GET['squad']) && $_GET['squad'] == "canceledtroops") ? '<span style="margin-top: 5px; display: block;">' . getSquadLogo($db->squad) . '</span>' : '') . '
 
-						<a href="index.php?event=' . $db->id . '">' . date('M d, Y', strtotime($db->dateStart)) . '' . '<br />';
+						<a href="index.php?event=' . $db->id . '">' . date('D, M d, Y', strtotime($db->dateStart)) . '' . '<br />';
 
                         // If has links to event, or is linked, show shift data
                         if ($getNumOfLinks > 0 || $db->link != 0) {

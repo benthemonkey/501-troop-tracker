@@ -158,6 +158,7 @@ CREATE TABLE `events` (
   `amenities` text,
   `referred` text,
   `poc` text,
+  `createdBy` int DEFAULT NULL,
   `comments` text,
   `location` varchar(500) DEFAULT NULL,
   `latitude` varchar(255) DEFAULT NULL,

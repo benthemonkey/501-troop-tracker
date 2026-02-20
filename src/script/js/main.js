@@ -1540,6 +1540,7 @@ $(document).ready(function () {
 
 					$("#referred").val(json.referred);
 					$("#poc").val(json.poc);
+					$("#createdByDisplay").text(json.createdByName || "Not available");
 
 					// Hide options if armor party
 					if (json.label == 10) {

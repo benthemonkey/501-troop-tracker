@@ -6021,8 +6021,8 @@ function createEvent($name, $venue, $dateStart, $dateEnd, $website, $numberOfAtt
 	$comments = cleanInput($comments);
 	$location = cleanInput($location);
 
-	$statement = $conn->prepare("INSERT INTO events (name, venue, dateStart, dateEnd, website, numberOfAttend, requestedNumber, requestedCharacter, secureChanging, blasters, lightsabers, parking, mobility, amenities, referred, poc, comments, location, label, limitedEvent, limit501st, limitTotalTroopers, limitHandlers, friendLimit, allowTentative, squad, link) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-	$statement->bind_param("sssssiisiiiiissssssiiiiiiii", $name, $venue, $dateStart, $dateEnd, $website, $numberOfAttend, $requestedNumber, $requestedCharacter, $secureChanging, $blasters, $lightsabers, $parking, $mobility, $amenities, $referred, $poc, $comments, $location, $label, $limitedEvent, $limit501st, $limitTotalTroopers, $limitHandlers, $friendLimit, $allowTentative, $squad, $link);
+	$statement = $conn->prepare("INSERT INTO events (name, venue, dateStart, dateEnd, website, numberOfAttend, requestedNumber, requestedCharacter, secureChanging, blasters, lightsabers, parking, mobility, amenities, referred, poc, comments, location, label, limitedEvent, limit501st, limitTotalTroopers, limitHandlers, friendLimit, allowTentative, squad, link, createdBy) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	$statement->bind_param("sssssiisiiiiissssssiiiiiiiii", $name, $venue, $dateStart, $dateEnd, $website, $numberOfAttend, $requestedNumber, $requestedCharacter, $secureChanging, $blasters, $lightsabers, $parking, $mobility, $amenities, $referred, $poc, $comments, $location, $label, $limitedEvent, $limit501st, $limitTotalTroopers, $limitHandlers, $friendLimit, $allowTentative, $squad, $link, $_SESSION['id']);
 	$statement->execute();
 
 	return $conn->insert_id;
