@@ -3708,7 +3708,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 						<select name="squadm" id="squadm">
 							<option value="null" SELECTED>Please choose an option...</option>
 							' . squadSelectList(false) . '
-							<option value="0">' . garrison . '</option>
+							<!-- <option value="0">' . garrison . '</option> -->
 						</select>		
 
 						<p>Date/Time Start:</p>
