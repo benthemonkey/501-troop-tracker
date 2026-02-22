@@ -136,6 +136,22 @@ CREATE TABLE `droid_troopers` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `email_queue`
+--
+
+CREATE TABLE `email_queue` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `send_to` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `subject` varchar(255) NOT NULL,
+  `message` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `events`
 --
 
@@ -531,6 +547,12 @@ ALTER TABLE `donations`
   ADD PRIMARY KEY (`txn_id`);
 
 --
+-- Indexes for table `email_queue`
+--
+ALTER TABLE `email_queue`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `events`
 --
 ALTER TABLE `events`
@@ -648,6 +670,12 @@ ALTER TABLE `comments`
 --
 ALTER TABLE `costumes`
   MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `email_queue`
+--
+ALTER TABLE `email_queue`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `events`
