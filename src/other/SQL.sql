@@ -48,6 +48,7 @@ CREATE TABLE `501st_troopers` (
   `thumbnail` varchar(255) NOT NULL,
   `link` varchar(255) NOT NULL,
   `squad` int NOT NULL,
+  `garrison` int NOT NULL,
   `approved` int NOT NULL DEFAULT '0',
   `status` int NOT NULL DEFAULT '0',
   `standing` int NOT NULL DEFAULT '0',

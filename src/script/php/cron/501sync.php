@@ -34,48 +34,48 @@ set_time_limit(0);
 $conn->query("TRUNCATE TABLE 501st_troopers");
 $conn->query("TRUNCATE TABLE 501st_costumes");
 
-// Fetch trooper data
-$json = file_get_contents("https://www.501st.com/memberAPI/v3/garrisons/$garrisonIdAPI/members");
-$trooperData = json_decode($json, true);
-
-if (!$trooperData || empty($trooperData['unit']['members'])) {
-    die("Failed to retrieve trooper data.");
-}
-
 // Prepare database insertion queries
-$trooperStmt = $conn->prepare("INSERT INTO 501st_troopers (legionid, name, thumbnail, link, squad, approved, status, standing, joindate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+$trooperStmt = $conn->prepare("INSERT INTO 501st_troopers (legionid, name, thumbnail, link, squad, garrison, approved, status, standing, joindate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 $costumeStmt = $conn->prepare("INSERT INTO 501st_costumes (legionid, costumeid, prefix, costumename, photo, thumbnail, bucketoff) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-// Process members
-foreach ($trooperData['unit']['members'] as $trooper) {
-    $legionId = $trooper['legionId'];
+$query = "SELECT tkid FROM troopers WHERE tkid != 0 AND approved = 1 AND p501 < 3";
+if ($result = mysqli_query($conn, $query))
+{
+    while ($db = mysqli_fetch_object($result))
+	{
+    
+    $legionId = $db->tkid;
 
     // Fetch detailed member data
-    $json2 = file_get_contents("https://www.501st.com/memberAPI/v3/legionId/$legionId");
+    $json2 = file_get_contents("https://www.501st.com/memberAPI/v3/legionId/$legionId/costumes");
     $memberData = json_decode($json2, true);
 
-    if (!$memberData) continue;
+    if (!$memberData) {
+        continue;
+    }
+    
+    $convertedSquadId = convertSquadId($memberData['squadId']);
+    $convertedMemberApproved = convertMemberApproved( $memberData['memberApproved']);
+    $convertedMemberStatus = convertMemberStatus($memberData['memberStatus']);
+    $convertedMemberStanding = convertMemberStanding($memberData['memberStanding']);
 
     $trooperStmt->bind_param(
-        "ssssiiiss",
+        "ssssiiiiss",
         $legionId,
-        $trooper['fullName'],
-        $trooper['thumbnail'],
-        $trooper['link'],
-        convertSquadId($trooper['squadId']),
-        convertMemberApproved($memberData['memberApproved']),
-        convertMemberStatus($memberData['memberStatus']),
-        convertMemberStanding($memberData['memberStanding']),
+        $memberData['fullName'],
+        $memberData['primaryThumbnail'],
+        $memberData['profileUrl'],
+        $convertedSquadId,
+        $memberData['garrisonId'],
+        $convertedMemberApproved,
+        $convertedMemberStatus,
+        $convertedMemberStanding,
         $memberData['joinDate']
     );
     $trooperStmt->execute();
 
-    // Fetch and insert costume data
-    $json3 = file_get_contents("https://www.501st.com/memberAPI/v3/legionId/$legionId/costumes");
-    $costumeData = json_decode($json3, true);
-
-    if ($costumeData && !empty($costumeData['costumes'])) {
-        foreach ($costumeData['costumes'] as $costume) {
+    if (!empty($memberData['costumes'])) {
+        foreach ($memberData['costumes'] as $costume) {
             $costumeStmt->bind_param(
                 "sssssss",
                 $legionId,
@@ -90,6 +90,7 @@ foreach ($trooperData['unit']['members'] as $trooper) {
         }
     }
 }
+}
 
 // Close statements
 $trooperStmt->close();
@@ -99,11 +100,7 @@ $costumeStmt->close();
 $trooperCounts = [
     "Total Members" => $conn->query("SELECT COUNT(*) AS count FROM 501st_troopers")->fetch_object()->count,
     "No Squad" => $conn->query("SELECT COUNT(*) AS count FROM 501st_troopers WHERE squad = '0'")->fetch_object()->count,
-    "Everglades" => $conn->query("SELECT COUNT(*) AS count FROM 501st_troopers WHERE squad = '1'")->fetch_object()->count,
-    "Makaze" => $conn->query("SELECT COUNT(*) AS count FROM 501st_troopers WHERE squad = '2'")->fetch_object()->count,
-    "Parjai" => $conn->query("SELECT COUNT(*) AS count FROM 501st_troopers WHERE squad = '3'")->fetch_object()->count,
-    "Squad 7" => $conn->query("SELECT COUNT(*) AS count FROM 501st_troopers WHERE squad = '4'")->fetch_object()->count,
-    "Tampa" => $conn->query("SELECT COUNT(*) AS count FROM 501st_troopers WHERE squad = '5'")->fetch_object()->count,
+    "Other Garrison" => $conn->query("SELECT COUNT(*) AS count FROM 501st_troopers WHERE garrison != $garrisonIdAPI")->fetch_object()->count,
     "Blurrg" => $conn->query("SELECT COUNT(*) AS count FROM 501st_troopers WHERE squad = '15'")->fetch_object()->count,
 ];
 
