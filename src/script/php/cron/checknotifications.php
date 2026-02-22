@@ -40,7 +40,7 @@ if ($result = mysqli_query($conn, $query))
 		}
 
 		// Send notification to Discord
-		sendEventNotify($db->id, date('D, M d, Y', strtotime($db->dateStart)) . " " . readInput($db->name), readInput($db->comments), $db->squad);
+		sendEventNotify($db->id, date('D, M d, Y', strtotime($db->dateStart)) . " - " . readInput($db->name), readInput($db->comments), $db->squad);
 	}
 }
 
