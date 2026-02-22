@@ -75,13 +75,13 @@ if ($result = mysqli_query($conn, $query))
 			// Check if 501st member with squad
 			if($db->p501 > 0 && $db->p501 < 3 && $db->squad > 0 && in_array($db->squad, $validSquadIDs))
 			{
-				if (!in_array($squadArray[($db->squad - 1)]['userGroup'], $groupArray))
+				if (!in_array($squadArray[($db->squad)]['userGroup'], $groupArray))
 				{
 					// Not listed on forum, update
-					array_push($groupArray, $squadArray[($db->squad - 1)]['userGroup']);
+					array_push($groupArray, $squadArray[($db->squad)]['userGroup']);
 				}
 
-				array_push($groupArray2, $squadArray[($db->squad - 1)]['userGroup']);
+				array_push($groupArray2, $squadArray[($db->squad)]['userGroup']);
 
 				// Check if Florida Garrison member set
 				if (!in_array($userGroupGarrison, $groupArray))
@@ -96,10 +96,10 @@ if ($result = mysqli_query($conn, $query))
 			// 501st member, no squad
 			else if($db->p501 > 0 && $db->p501 < 3 && $db->squad == 0)
 			{
-				if (!in_array($userGroupGarrison, $groupArray))
+				if (!in_array($userGroup501st, $groupArray))
 				{
 					// Not listed on forum, update
-					array_push($groupArray, $userGroupGarrison);
+					array_push($groupArray, $userGroup501st);
 				}
 
 				$activeClubs++;

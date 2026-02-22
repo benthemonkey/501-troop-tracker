@@ -448,7 +448,7 @@ function getTroopCounts($id)
 	$countAll = $statement->num_rows;
 
 	// Get troop counts - 501st
-	$statement = $conn->prepare("SELECT event_sign_up.id FROM event_sign_up LEFT JOIN events ON events.id = event_sign_up.troopid WHERE events.closed = '1' AND event_sign_up.status = '3' AND event_sign_up.trooperid = ? AND ".getCostumeQueryValuesSquad($squadArray[0]['squadID'])." GROUP BY events.id, event_sign_up.id");
+	$statement = $conn->prepare("SELECT event_sign_up.id FROM event_sign_up LEFT JOIN events ON events.id = event_sign_up.troopid WHERE events.closed = '1' AND event_sign_up.status = '3' AND event_sign_up.trooperid = ? AND ".getCostumeQueryValuesSquad($squadArray[array_key_first($squadArray)]['squadID'])." GROUP BY events.id, event_sign_up.id");
 	$statement->bind_param("i", $id);
 	$statement->execute();
 	$statement->store_result();
@@ -557,12 +557,7 @@ function labelToForumCategory($label, $squad) {
 		break;
 
 		default:
-			foreach ($squadArray as $sa) {
-                if ((int)$sa['squadID'] === (int)$squad) {
-                    return $sa['eventForum'];
-                }
-            }
-            return 0; // fallback
+			return $squadArray[intval($squad)]['eventForum'];
 		break;
 	}
 }
@@ -595,12 +590,7 @@ function labelToForumCategoryArchive($label, $squad) {
 		break;
 
 		default:
-			foreach ($squadArray as $sa) {
-                if ((int)$sa['squadID'] === (int)$squad) {
-                    return $sa['eventForumArchive'];
-                }
-            }
-            return 0; // fallback
+			return $squadArray[intval($squad - 1)]['eventForumArchive'];
 		break;
 	}
 }
@@ -856,11 +846,11 @@ function isDualMember($trooperId) {
 			if ($db->p501 == 1 || $db->p501 == 2 || $db->p501 == 4) {
 				$dualMemberList[] = 0;
 
-				foreach ($squadArray[0]['costumes'] as $costume) {
+				foreach ($squadArray[array_key_first($squadArray)]['costumes'] as $costume) {
 						$dualMemberList[] = $costume;
 				}
 			} else {
-				foreach ($squadArray[0]['costumes'] as $costume) {
+				foreach ($squadArray[array_key_first($squadArray)]['costumes'] as $costume) {
 						$dualMemberList = array_diff($dualMemberList, array($costume));
 						$dualMemberListRecheck[] = $costume;
 				}
@@ -2908,7 +2898,7 @@ function getCostumeAbbreviation($clubid)
 	// Set return value
 	$returnValue = "";
 
-	if(in_array($clubid, $squadArray[0]['costumes']))
+	if(in_array($clubid, $squadArray[array_key_first($squadArray)]['costumes']))
 	{
 		// Set
 		$returnValue .= '(501st) ';
@@ -3168,8 +3158,8 @@ function isHandler($trooperid)
 	{
 		while ($db = mysqli_fetch_object($result))
 		{
-			$db_data1 = $squadArray[intval($db->squad - 1)]['db'];
-			$db_data2 = $clubArray[intval($db->squad - 1)]['db'];
+			$db_data1 = $squadArray[intval($db->squad)]['db'];
+			$db_data2 = $clubArray[intval($db->squad)]['db'];
 
 			if (in_array($db->squad, $validSquadIDs)) {
 				if($db->$db_data1 == 4) {

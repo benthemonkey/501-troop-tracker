@@ -3594,7 +3594,7 @@ if(isset($_GET['do']) && $_GET['do'] == "editevent" && loggedIn() && isAdmin())
 
 						// Update thread
 						editPost($db->post_id, $thread_body);
-						moveThread($db->thread_id, $squadArray[intval($_POST['squadm'] - 1)]['eventForum']);
+						moveThread($db->thread_id, $squadArray[intval($_POST['squadm'])]['eventForum']);
 					}
 				}
 			}
@@ -3635,7 +3635,7 @@ if(isset($_GET['do']) && $_GET['do'] == "editevent" && loggedIn() && isAdmin())
 
 						// Update thread
 						editPost($db->post_id, $thread_body);
-						moveThread($db->thread_id, $squadArray[intval($_POST['squadm'] - 1)]['eventForum']);
+						moveThread($db->thread_id, $squadArray[intval($_POST['squadm'])]['eventForum']);
 					}
 				}
 			}
@@ -3646,20 +3646,7 @@ if(isset($_GET['do']) && $_GET['do'] == "editevent" && loggedIn() && isAdmin())
 
 				// Update thread
 				editPost(getEventPostID($_POST['eventIdE']), $thread_body);
-				// find $squadArray entry where squad ID matches $_POST['squadm']
-				$squad = null;
-				foreach ($squadArray as $squad_entry)
-				{
-					if ($squad_entry['squadID'] == intval($_POST['squadm']))
-					{
-						$squad = $squad_entry;
-						break;
-					}
-				}
-				if ($squad !== null)
-				{
-					moveThread(getEventThreadID($_POST['eventIdE']), $squad['eventForum']);
-				}
+				moveThread(getEventThreadID($_POST['eventIdE']), $squadArray[intval($_POST['squadm'])]['eventForum']);
 
 				// Loop through clubs
 				foreach($clubArray as $club => $club_value)
