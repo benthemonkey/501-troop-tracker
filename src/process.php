@@ -341,6 +341,8 @@ if(isset($_GET['do']) && $_GET['do'] == "roster-trooper-confirmation" && loggedI
 	$statement = $conn->prepare("UPDATE event_sign_up SET status = ? WHERE id = ?");
 	$statement->bind_param("ii", $_POST['status'], $_POST['signid']);
 	$statement->execute();
+	
+	sendNotification(getName($_SESSION['id']) . " has " . ($_POST['status'] == 3 ? 'confirmed' : 'denied') . " attendance at a troop on behalf of " . $_POST['troopername'], $_SESSION['id'], 30, convertDataToJSON("SELECT esu.*, t.name as trooper_name, e.name as event_name FROM event_sign_up esu LEFT JOIN troopers t ON esu.trooperid=t.id LEFT JOIN events e ON e.id=esu.troopid WHERE esu.id = '".$_POST['signid'] . "'"));
 }
 
 /******************** SAVE FAVORITE COSTUMES *******************************/

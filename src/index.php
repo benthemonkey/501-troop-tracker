@@ -2544,12 +2544,12 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
                     }
 
                     echo '
-					<p class="trooper-confirmation-box" signid="' . $db->signupId . '">
+					<p class="trooper-confirmation-box" data-signid="' . $db->signupId . '">
 						<a href="index.php?event=' . $db->eventId . '" target="_blank">' . (isLink($db->eventId) > 0 ? '[<b>' . date("l", strtotime($db->dateStart)) . '</b> : <i>' . date("m/d - h:i A", strtotime($db->dateStart)) . ' - ' . date("h:i A", strtotime($db->dateEnd)) . '</i>] ' : '') . '' . $db->name . ' ' . $db->trooperName . ' ' . ($db->note != '' ? 'noted as ' . $db->note : '') . '</a>
 						<br />
 						<b>Attended As:</b> ' . getCostume($db->costume) . '
 						<br /><br />
-						<a href="#/" class="button" name="attend-button" status="3" signid="' . $db->signupId . '">Y</a>	<a href="#/" class="button" name="attend-button" status="4" signid="' . $db->signupId . '">N</a>
+						<a href="#/" class="button" name="attend-button" data-status="3" data-signid="' . $db->signupId . '" data-troopername="' . $trooperName . '">Y</a>	<a href="#/" class="button" name="attend-button" data-status="4" data-signid="' . $db->signupId . '" data-troopername="' . $trooperName . '">N</a>
 					</p>';
 
                     // Increment
@@ -6765,7 +6765,7 @@ echo '
 
 echo '
 <!-- External JS File -->
-<script type="text/javascript" src="script/js/main.js?v=14"></script>
+<script type="text/javascript" src="script/js/main.js?v=15"></script>
 </body>
 </html>';
 
