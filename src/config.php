@@ -6073,6 +6073,8 @@ function sendEventUpdate($troopid, $trooperid, $subject, $message)
 */
 function sendEmail($SendTo, $Name, $Subject, $Message)
 {
+	global $conn;
+
 	// MAIL
 	$mail = new PHPMailer(TRUE);
 
@@ -6114,10 +6116,17 @@ function sendEmail($SendTo, $Name, $Subject, $Message)
 	$mail->Body = $Message;
 
 	/* Finally send the mail. */
-	if (!$mail->send())
+	try
 	{
-	   /* PHPMailer error. */
-	   //echo $mail->ErrorInfo;
+		$mail->send();
+	}
+	catch (Exception $e)
+	{
+		/* Queue the email for retry on the next cron run. */
+		$stmt = $conn->prepare("INSERT INTO email_queue (send_to, name, subject, message) VALUES (?, ?, ?, ?)");
+		$stmt->bind_param("ssss", $SendTo, $Name, $Subject, $Message);
+		$stmt->execute();
+		$stmt->close();
 	}
 	// END MAIL
 }
