@@ -5657,8 +5657,9 @@ if (isset($_GET['event']) && loggedIn()) {
                                     echo '
 												<option value="0">I\'ll be there!</option>';
 
+                                    $isWithin7Days = strtotime($db->dateStart) <= strtotime('+7 days');
                                     // Check if tentative allowed
-                                    if ($db->allowTentative == 1) {
+                                    if ($db->allowTentative == 1 && !$isWithin7Days) {
                                         echo '
 												<option value="2">Tentative</option>';
                                     }
