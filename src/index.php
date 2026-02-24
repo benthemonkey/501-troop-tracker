@@ -6180,7 +6180,8 @@ else if (isset($_GET['event']) && !loggedIn()) {
                             if ($db->closed == 4) {
                                 echo '
 								<br />
-								<span style="color:green;"><b>THIS TROOP IS FULL! (You can still sign up as "stand by")</b></span>';
+								<span style="color:green;"><b>THIS TROOP IS FULL!</b></span>
+                                <em>(You can still sign up as "stand by")</em>';
                             }
                             // If not enough troopers
                             else if ($getNumOfTroopers <= 1) {
@@ -6192,7 +6193,8 @@ else if (isset($_GET['event']) && !loggedIn()) {
                             else if (($getNumOfTroopers - handlerEventCount($db->id)) >= $limitTotal && ($db->limitHandlers > 500 || $db->limitHandlers < 500) && (handlerEventCount($db->id) >= $db->limitHandlers)) {
                                 echo '
 								<br />
-								<span style="color:green;"><b>THIS TROOP IS FULL! (You can still sign up as "stand by")</b></span>';
+								<span style="color:green;"><b>THIS TROOP IS FULL!</b></span>
+                                <em>(You can still sign up as "stand by")</em>';
                             }
                             // If full
                             else if (($getNumOfTroopers - handlerEventCount($db->id)) >= $limitTotal && $db->limitHandlers == 500) {
@@ -6200,7 +6202,8 @@ else if (isset($_GET['event']) && !loggedIn()) {
                                 if ($db->limitHandlers == 500) {
                                     echo '
 									<br />
-									<span style="color:green;"><b>THIS TROOP IS FULL! (You can still sign up as "stand by")</b></span>';
+									<span style="color:green;"><b>THIS TROOP IS FULL!</b></span>
+                                    <em>(You can still sign up as "stand by")</em>';
                                 } else {
                                     $statement2 = $conn->prepare("SELECT id FROM event_sign_up WHERE (status = '0' OR status = '2') AND troopid = ? AND (SELECT costume FROM costumes WHERE id = event_sign_up.costume) LIKE '%handler%'");
                                     $statement2->bind_param("i", $db->id);
@@ -6212,7 +6215,8 @@ else if (isset($_GET['event']) && !loggedIn()) {
                                     if ($getNumOfHandlers >= $db->limitHandlers) {
                                         echo '
 										<br />
-										<span style="color:green;"><b>THIS TROOP IS FULL! (You can still sign up as "stand by")</b></span>';
+										<span style="color:green;"><b>THIS TROOP IS FULL!</b></span>
+                                        <em>(You can still sign up as "stand by")</em>';
                                     } else {
                                         // Show troopers attending
                                         echo '
