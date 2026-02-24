@@ -3609,6 +3609,8 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
                     // If this a linked event?
                     if (isLink($db->id) > 0) {
                         $add .= "[" . date("l", strtotime($db->dateStart)) . " : " . date("m/d - h:i A", strtotime($db->dateStart)) . " - " . date("h:i A", strtotime($db->dateEnd)) . "] ";
+                    } else {
+                        $add .= "[" . date("m/d/Y", strtotime($db->dateStart)) . "] ";
                     }
 
                     echo '<option value="' . $db->id . '" link="' . isLink($db->id) . '" ' . echoSelect($db->id, $eid) . '>' . $add . '' . $db->name . ' ' . (($db->latitude == 0 || $db->longitude == 0) ? '[LOCATION ERROR]' : '') . '</option>';
