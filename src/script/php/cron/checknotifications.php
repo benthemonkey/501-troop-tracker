@@ -17,6 +17,10 @@ if (php_sapi_name() !== 'cli') {
 // Include config
 include(dirname(__DIR__) . '/../../config.php');
 
+// PHP Mail namespace
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 // Loop through all events to send notifications
 $query = "SELECT notification_check.troopid, notification_check.commentid, events.squad, events.name, events.id, events.comments, events.dateStart FROM notification_check LEFT JOIN events ON events.id = notification_check.troopid WHERE notification_check.troopid != 0 AND notification_check.commentid = 0 AND notification_check.trooperid = 0 AND notification_check.trooperstatus = 0 AND notification_check.troopstatus = 0";
 if ($result = mysqli_query($conn, $query))
