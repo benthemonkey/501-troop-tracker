@@ -927,19 +927,6 @@ $(document).ready(function () {
 		}
 	})
 
-	// Hide calendar view if screen is too small
-	$(window).resize(function () {
-		if ($(window).width() < 800) {
-			// Only hide if calendar view is not visible
-			if ($("#calendarview").is(":hidden")) {
-				$("a[id=changeview]").hide();
-			}
-		}
-		else {
-			$("a[id=changeview]").show();
-		}
-	});
-
 	// List/Calendar View
 	$("#changeview").click(function (e) {
 		e.preventDefault();

@@ -793,6 +793,10 @@ table[name*="comment_"] textarea {
 		right: 0;
 		top: 0;
 	}
+	
+	.button-calendar {
+		display: none;
+	}
 }
 
 

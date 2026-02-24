@@ -3732,7 +3732,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 							<p>Number of Attendees:</p>
 							<input type="number" name="numberOfAttend" id="numberOfAttend" />
 
-							<p>Requested Number of Characters:</p>
+							<p>Requested Number of Characters:<br/><em>This is a suggestion from the event requester. To restrict total sign ups, see "Change Limits" below.</em></p>
 							<input type="number" name="requestedNumber" id="requestedNumber" />
 
 							<p>Requested Character Types:</p>
@@ -4461,7 +4461,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 					<p>Number of Attendees:</p>
 					<input type="number" name="numberOfAttend" id="numberOfAttend" value="' . copyEvent($eid, $numberOfAttend) . '" />
 
-					<p>Requested Number of Characters:</p>
+					<p>Requested Number of Characters:<br/><em>This is a suggestion from the event requester. To restrict total sign ups, see "Change Limits" below.</em></p>
 					<input type="number" name="requestedNumber" id="requestedNumber" value="' . copyEvent($eid, $requestNumber) . '" />
 
 					<p>Requested Character Types:</p>
@@ -5505,6 +5505,7 @@ if (isset($_GET['event']) && loggedIn()) {
 								<li>This event is limited to ' . $db->limitHandlers . ' handlers. <b>' . ($db->limitHandlers - handlerEventCount($db->id)) . ' handlers remaining.</b></li>';
                     }
                     echo '
+                            <li>If an event is full, you can still sign up as "stand by".</li>
 						</ul>
 					</div>';
                 }
@@ -6110,7 +6111,7 @@ else if (isset($_GET['event']) && !loggedIn()) {
 
                 echo '
 				<p>
-					<a href="#/" id="changeview" class="button">Calendar View</a> 
+					<a href="#/" id="changeview" class="button button--calendar">Calendar View</a> 
 					<a href="index.php?action=mapview" class="button">Map View</a>
 				</p>
 				
@@ -6179,7 +6180,7 @@ else if (isset($_GET['event']) && !loggedIn()) {
                             if ($db->closed == 4) {
                                 echo '
 								<br />
-								<span style="color:green;"><b>THIS TROOP IS FULL!</b></span>';
+								<span style="color:green;"><b>THIS TROOP IS FULL! (You can still sign up as "stand by")</b></span>';
                             }
                             // If not enough troopers
                             else if ($getNumOfTroopers <= 1) {
@@ -6191,7 +6192,7 @@ else if (isset($_GET['event']) && !loggedIn()) {
                             else if (($getNumOfTroopers - handlerEventCount($db->id)) >= $limitTotal && ($db->limitHandlers > 500 || $db->limitHandlers < 500) && (handlerEventCount($db->id) >= $db->limitHandlers)) {
                                 echo '
 								<br />
-								<span style="color:green;"><b>THIS TROOP IS FULL!</b></span>';
+								<span style="color:green;"><b>THIS TROOP IS FULL! (You can still sign up as "stand by")</b></span>';
                             }
                             // If full
                             else if (($getNumOfTroopers - handlerEventCount($db->id)) >= $limitTotal && $db->limitHandlers == 500) {
@@ -6199,7 +6200,7 @@ else if (isset($_GET['event']) && !loggedIn()) {
                                 if ($db->limitHandlers == 500) {
                                     echo '
 									<br />
-									<span style="color:green;"><b>THIS TROOP IS FULL!</b></span>';
+									<span style="color:green;"><b>THIS TROOP IS FULL! (You can still sign up as "stand by")</b></span>';
                                 } else {
                                     $statement2 = $conn->prepare("SELECT id FROM event_sign_up WHERE (status = '0' OR status = '2') AND troopid = ? AND (SELECT costume FROM costumes WHERE id = event_sign_up.costume) LIKE '%handler%'");
                                     $statement2->bind_param("i", $db->id);
@@ -6211,7 +6212,7 @@ else if (isset($_GET['event']) && !loggedIn()) {
                                     if ($getNumOfHandlers >= $db->limitHandlers) {
                                         echo '
 										<br />
-										<span style="color:green;"><b>THIS TROOP IS FULL!</b></span>';
+										<span style="color:green;"><b>THIS TROOP IS FULL! (You can still sign up as "stand by")</b></span>';
                                     } else {
                                         // Show troopers attending
                                         echo '
@@ -6765,7 +6766,7 @@ echo '
 
 echo '
 <!-- External JS File -->
-<script type="text/javascript" src="script/js/main.js?v=15"></script>
+<script type="text/javascript" src="script/js/main.js?v=16"></script>
 </body>
 </html>';
 

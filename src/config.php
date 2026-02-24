@@ -341,8 +341,10 @@ function loadAddFriends($event, $id)
 		$out .= '
 			<option value="0">I\'ll be there!</option>';
 
-		// Check if tentative allowed
-		if(getEventColumn('allowTentative', cleanInput($event)) == 1)
+		// Check if tentative allowed and event is not within the next 7 days
+		$eventDate = getEventColumn('dateStart', cleanInput($event));
+		$isWithin7Days = strtotime($eventDate) <= strtotime('+7 days');
+		if(getEventColumn('allowTentative', cleanInput($event)) == 1 && !$isWithin7Days)
 		{
 			$out .= '
 			<option value="2">Tentative</option>';
@@ -5009,10 +5011,13 @@ function getRoster($eventID, $limitTotal = 0, $totalTrooperEvent = 0, $signedUp 
 								// Regular
 								else
 								{
+									// Check if tentative allowed and event is not within the next 7 days
+									$isWithin7Days = strtotime($db->dateStart) <= strtotime('+7 days');
+									
 									$data .= '
 									<select name="modifysignupStatusForm" id="modifysignupStatusForm" trooperid="'.$db2->trooperId.'" signid="'.$db2->signId.'">
 										<option value="0" '.echoSelect(0, $db2->status).'>I\'ll be there!</option>
-										<option value="2" '.echoSelect(2, $db2->status).'>Tentative</option>
+										<option value="2" '.echoSelect(2, $db2->status).($isWithin7Days ? ' disabled' : '').'>Tentative</option>
 										<option value="4" '.echoSelect(4, $db2->status).'>Cancel</option>
 									</select>';
 								}
