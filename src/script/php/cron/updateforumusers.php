@@ -103,7 +103,7 @@ if ($result = mysqli_query($conn, $query))
 				}
 
 				$activeClubs++;
-				array_push($groupArray2, $userGroupGarrison);
+				array_push($groupArray2, $userGroup501st);
 			}
 			// 501st member, handler
 			else if($db->p501 == 4)
