@@ -1277,27 +1277,27 @@ if (isset($_GET['action']) && $_GET['action'] == "search") {
                 // If All
                 if ($_POST['squad'] == 0) {
                     // Get troop counts - All
-                    $statement1 = $conn->prepare("SELECT COUNT(event_sign_up.id), events.id FROM event_sign_up LEFT JOIN events ON events.id = event_sign_up.troopid WHERE event_sign_up.trooperid = ? AND events.dateStart >= ? AND events.dateEnd <= ? AND event_sign_up.status = '3' AND events.closed = '1'");
+                    $statement1 = $conn->prepare("SELECT COUNT(event_sign_up.id), max(events.dateStart) FROM event_sign_up LEFT JOIN events ON events.id = event_sign_up.troopid WHERE event_sign_up.trooperid = ? AND events.dateStart >= ? AND events.dateEnd <= ? AND event_sign_up.status = '3' AND events.closed = '1'");
                     $statement1->bind_param("iss", $db->id, $dateStartQuery, $dateEndQuery);
                     $statement1->execute();
-                    $statement1->bind_result($count, $eventid);
+                    $statement1->bind_result($count, $date);
                     $statement1->fetch();
                     $statement1->close();
                 } else if (($_POST['squad'] >= 1 && in_array($_POST['squad'], $validSquadIDs))) {
                     // If 501st
                     // Get troop counts - 501st
-                    $statement1 = $conn->prepare("SELECT COUNT(event_sign_up.id), max(events.dateStart), events.id FROM event_sign_up LEFT JOIN events ON events.id = event_sign_up.troopid WHERE event_sign_up.status = '3' AND events.closed = '1' AND event_sign_up.trooperid = ? AND events.dateStart >= ? AND events.dateEnd <= ? AND " . getCostumeQueryValuesSquad($_POST['squad']) . "");
+                    $statement1 = $conn->prepare("SELECT COUNT(event_sign_up.id), max(events.dateStart) FROM event_sign_up LEFT JOIN events ON events.id = event_sign_up.troopid WHERE event_sign_up.status = '3' AND events.closed = '1' AND event_sign_up.trooperid = ? AND events.dateStart >= ? AND events.dateEnd <= ? AND " . getCostumeQueryValuesSquad($_POST['squad']) . "");
                     $statement1->bind_param("iss", $db->id, $dateStartQuery, $dateEndQuery);
                     $statement1->execute();
-                    $statement1->bind_result($count, $date, $eventid);
+                    $statement1->bind_result($count, $date);
                     $statement1->fetch();
                     $statement1->close();
                 } else {
                     // If club
-                    $statement1 = $conn->prepare("SELECT COUNT(event_sign_up.id), events.id FROM event_sign_up LEFT JOIN events ON events.id = event_sign_up.troopid WHERE event_sign_up.status = '3' AND events.closed = '1' AND event_sign_up.trooperid = ? AND events.dateStart >= ? AND events.dateEnd <= ? AND " . getCostumeQueryValues($_POST['squad']) . "");
+                    $statement1 = $conn->prepare("SELECT COUNT(event_sign_up.id), max(events.dateStart) FROM event_sign_up LEFT JOIN events ON events.id = event_sign_up.troopid WHERE event_sign_up.status = '3' AND events.closed = '1' AND event_sign_up.trooperid = ? AND events.dateStart >= ? AND events.dateEnd <= ? AND " . getCostumeQueryValues($_POST['squad']) . "");
                     $statement1->bind_param("iss", $db->id, $dateStartQuery, $dateEndQuery);
                     $statement1->execute();
-                    $statement1->bind_result($count, $eventid);
+                    $statement1->bind_result($count, $date);
                     $statement1->fetch();
                     $statement1->close();
                 }
@@ -1816,7 +1816,7 @@ if (isset($_GET['action']) && $_GET['action'] == "trooptracker" && loggedIn()) {
 
             // How many troopers attended
             $statement = $conn->prepare("SELECT COUNT(*) FROM event_sign_up WHERE troopid = ? AND status = '3'");
-            $statement->bind_param("i", $db->troopid);
+            $statement->bind_param("i", $db->eventId);
             $statement->execute();
             $statement->bind_result($count);
             $statement->fetch();
@@ -2028,9 +2028,9 @@ if (isset($_GET['action']) && $_GET['action'] == "trooptracker" && loggedIn()) {
 			Search Trooper Name: <input type="text" name="searchTrooperName" id="searchTrooperName" />
 			<br /><br />
 			</div>
-			Date Start: <input type="text" name="dateStart" id="datepicker3" />
+			Date Start: <input type="text" name="dateStart" id="datepicker3" autocomplete="off" />
 			<br /><br />
-			Date End: <input type="text" name="dateEnd" id="datepicker4" />
+			Date End: <input type="text" name="dateEnd" id="datepicker4" autocomplete="off" />
 			<br /><br />
 			<div id="tkIDDiv">
 			Search TKID: <input type="text" name="tkID" id="tkID" />
