@@ -586,17 +586,27 @@ span.select2-selection__rendered {
 	color: var(--select-text-color) !important;
 }
 
+.container-image-container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
 .container-image {
 	height: 200px;
 	width: 200px;
 	position: relative;
 	display: inline-block;
+	margin: 5px;
 }
 
 .image-c {
 	position: absolute;
 	left: 0;
 	top: 0;
+	width: 200px;
+	height: 200px;
+	object-fit: cover;
 }
 
 .container-text {

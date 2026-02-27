@@ -61,8 +61,13 @@ if (!empty($_FILES))
 	// Get image size
 	list($width, $height) = getimagesize($targetFile);
 
-	// Limit size
-	if($width > 500 || $height > 500) { $width = 500; $height = 500; }
+	// Limit size while preserving aspect ratio
+	$maxSize = 500;
+	if ($width > $maxSize || $height > $maxSize) {
+		$scale = min($maxSize / $width, $maxSize / $height);
+		$width = (int) round($width * $scale);
+		$height = (int) round($height * $scale);
+	}
 
 	// Get file type
 	$fileType = mime_content_type($targetFile);
@@ -81,8 +86,8 @@ if (!empty($_FILES))
 		$image = imagecreatefromgif($targetFile);
 	}
 
-	// Resize image
-	$imgResized = imagescale($image , $width, $height);
+	// Resize image (pass -1 for height so imagescale preserves aspect ratio)
+	$imgResized = imagescale($image, $width, -1);
 
 	// Make new image
 	imagejpeg($imgResized, $storeFolder . "resize/" . $info['filename'] . ".jpg");
