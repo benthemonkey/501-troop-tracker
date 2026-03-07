@@ -5859,11 +5859,14 @@ if (isset($_GET['event']) && loggedIn()) {
                 $dateCheck = DateTime::createFromFormat("m/d/Y - h:i A", $date1);
                 $now = new DateTime();
 
+                $photoComment = '';
+                if ($eventClosed) {
+                    $photoComment = '<p>Please upload 1-2 representative photos to the Tracker, and the rest of your photos to the <a href="https://www.facebook.com/groups/144446266362704" target="_blank" style="text-decoration:underline">MWG Photo Facebook Group</a></p>';
+                }
                 echo '
 				<div class="section-card">
 					<h2 class="tm-section-header">Photo Upload</h2>
-                    <p>Please upload 1-2 representative photos to the Tracker, and the rest of your photos to the <a href="https://www.facebook.com/groups/144446266362704" target="_blank" style="text-decoration:underline">MWG Photo Facebook Group</a></p>
-
+                    ' . $photoComment . '
 					<form action="script/php/upload.php" class="dropzone" id="photoupload">
 						<input type="hidden" name="admin" value="' . (($dateCheck && $now < $dateCheck) ? 1 : 0) . '" />
 						<input type="hidden" name="troopid" value="' . cleanInput($_GET['event']) . '" />
