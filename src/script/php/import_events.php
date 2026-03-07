@@ -5,7 +5,7 @@ if (php_sapi_name() !== 'cli') {
     die('This script can only be run from the command line.');
 }
 
-require_once 'cred.php';
+include "../../cred.php";
 
 /**
  * Event Import Script
@@ -107,18 +107,26 @@ class EventImporter {
         // Remove the "* " prefix and trim
         $eventLine = trim(ltrim($eventLine, '* '));
 
-        // Pattern to match: MM/DD/YY STATE EVENT NAME (COSTUME)
-        $pattern = '/^(\d{2}\/\d{2}\/\d{2})\s+(\w{2})\s+(.+?)(?:\s+\(([^)]+)\))?$/';
+        // Pattern to match: MM/DD/YY STATE EVENT NAME (ABBR) or [EXACT NAME]
+        // The pattern captures either (...) in match 4 or [...] in match 5
+        $pattern = '/^(\d{2}\/\d{2}\/\d{2})\s+(\w{2})\s+(.+?)(?:\s+\(([^)]+)\))?(?:\s+\[([^\]]+)\])?$/';
 
         if (preg_match($pattern, $eventLine, $matches)) {
             $date = $matches[1];
             $state = $matches[2];
             $eventName = trim($matches[3]);
-            $costume = isset($matches[4]) ? trim($matches[4]) : '';
+            
+            // Logic: prioritize exact name [ ] over abbreviation ( )
+            $exactCostume = isset($matches[5]) ? trim($matches[5]) : null;
+            if (!empty($exactCostume)) {
+                $abbrCostume = $exactCostume;
+            } else {
+                $abbrCostume = isset($matches[4]) ? trim($matches[4]) : '';
+            }
 
             // Convert date format from MM/DD/YY to YYYY-MM-DD
             $dateParts = explode('/', $date);
-            $year = '20' . $dateParts[2]; // Assuming 20XX
+            $year = '20' . $dateParts[2];
             $month = str_pad($dateParts[0], 2, '0', STR_PAD_LEFT);
             $day = str_pad($dateParts[1], 2, '0', STR_PAD_LEFT);
             $fullDate = $year . '-' . $month . '-' . $day;
@@ -126,11 +134,12 @@ class EventImporter {
             return [
                 'date' => $fullDate,
                 'state' => $state,
-                'city' => $state, // Use state as city since we don't have city info
+                'city' => $state,
                 'name' => $eventName,
-                'costume' => $costume,
+                'costume' => $abbrCostume,
+                'isExact' => !empty($exactCostume),
                 'location' => $state,
-                'venue' => $eventName // Use event name as venue
+                'venue' => $eventName
             ];
         }
 
@@ -193,11 +202,30 @@ class EventImporter {
     /**
      * Get costume ID based on costume abbreviation and user's 501st costumes
      */
-    public function getCostumeId($costumeAbbr) {
+    public function getCostumeId($costumeAbbr, $isExact = false) {
         // Check cache first
         $cacheKey = $this->legionId . '::' . strtolower($costumeAbbr);
         if (isset($this->costumeCache[$cacheKey])) {
             return $this->costumeCache[$cacheKey];
+        }
+        
+        if ($isExact) {
+            try {
+                $stmt = $this->pdo->prepare("SELECT id, costume FROM costumes WHERE costume = ? LIMIT 1");
+                $stmt->execute([$costumeAbbr]);
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($result) {
+                    echo "    - Found exact costume match: '{$result['costume']}' (ID: {$result['id']})\n";
+                    $this->costumeCache[$cacheKey] = $result['id'];
+                    $this->costumeNameCache[$result['id']] = $result['costume'];
+                    return $result['id'];
+                } else {
+                    echo self::COLOR_YELLOW . "    ⚠ Exact costume '{$costumeAbbr}' not found in costumes table. Falling back to abbr/default." . self::COLOR_RESET . "\n";
+                }
+            } catch (Exception $e) {
+                echo "    - Error looking up exact costume: " . $e->getMessage() . "\n";
+            }
         }
         
         // if there's a slash, pick the first one.
@@ -379,6 +407,7 @@ class EventImporter {
 
             $eventData = $this->parseEvent($line);
             if ($eventData) {
+                print_r($eventData);
                 // Duplicate Detection Logic (Sequential)
                 $currentEventKey = $eventData['name'] . " (" . $eventData['date'] . ")";
                 
@@ -395,7 +424,7 @@ class EventImporter {
                 $previousEventKey = $currentEventKey;
                 try {
                     $eventId = $this->createOrGetEvent($eventData);
-                    $costumeId = $this->getCostumeId($eventData['costume']);
+                    $costumeId = $this->getCostumeId($eventData['costume'], $eventData['isExact']);
                     $this->addEventSignup($eventId, $costumeId);
                     $processedCount++;
                 } catch (Exception $e) {
