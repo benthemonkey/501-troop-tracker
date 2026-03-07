@@ -3041,8 +3041,8 @@ if(isset($_GET['do']) && $_GET['do'] == "editevent" && loggedIn() && isAdmin())
 	if(isset($_POST['submitCharity']))
 	{
 		// Ensure value is int
-		$_POST['charityDirectFunds'] = intval($_POST['charityDirectFunds']);
-		$_POST['charityIndirectFunds'] = intval($_POST['charityIndirectFunds']);
+		$_POST['charityDirectFunds'] = floatval($_POST['charityDirectFunds']);
+		$_POST['charityIndirectFunds'] = floatval($_POST['charityIndirectFunds']);
 		$_POST['charityAddHours'] = intval($_POST['charityAddHours']);
 
 		// Form Check
@@ -3054,7 +3054,7 @@ if(isset($_GET['do']) && $_GET['do'] == "editevent" && loggedIn() && isAdmin())
 		$_POST['charityName'] = cleanInput($_POST['charityName']);
 		$_POST['charityNote'] = cleanInput($_POST['charityNote']);
 		$statement = $conn->prepare("UPDATE events SET charityDirectFunds = ?, charityIndirectFunds = ?, charityName = ?, charityAddHours = ?, charityNote = ? WHERE id = ?");
-		$statement->bind_param("iisisi", $_POST['charityDirectFunds'], $_POST['charityIndirectFunds'], $_POST['charityName'], $_POST['charityAddHours'], $_POST['charityNote'], $_POST['eventId']);
+		$statement->bind_param("ddsisi", $_POST['charityDirectFunds'], $_POST['charityIndirectFunds'], $_POST['charityName'], $_POST['charityAddHours'], $_POST['charityNote'], $_POST['eventId']);
 		$statement->execute();
 		
 		// Send notification to command staff

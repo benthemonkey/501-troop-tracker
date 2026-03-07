@@ -1,6 +1,11 @@
 // Wait for the DOM to be ready
 $(function()
 {
+    $.validator.addMethod("currency2Decimals", function(value, element) {
+        // Standard Regex: Checks for digits, then optionally a dot and 1-2 digits
+        return this.optional(element) || /^\d+(\.\d{1,2})?$/.test(value);
+    }, "Please enter a valid amount (e.g., 10.50)");
+    
     $("form[name='createEventForm']").validate(
     {
         rules:
@@ -763,12 +768,12 @@ $(function()
             charityDirectFunds:
             {
                 required: false,
-                digits: true
+                currency2Decimals: true
             },
             charityIndirectFunds:
             {
                 required: false,
-                digits: true
+                currency2Decimals: true
             },
             charityAddHours:
             {
@@ -778,8 +783,8 @@ $(function()
         },
         messages:
         {
-            charityDirectFunds: "Please enter a valid number.",
-            charityIndirectFunds: "Please enter a valid number.",
+            charityDirectFunds: "Please enter a valid amount (e.g., 12.50)",
+            charityIndirectFunds: "Please enter a valid amount (e.g., 12.50)",
             charityAddHours: "Please enter a valid number."
         },
         submitHandler: function(form)
