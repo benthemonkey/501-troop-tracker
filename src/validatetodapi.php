@@ -63,6 +63,7 @@ foreach ($input as $trooper) {
 
         $checkedEvents[] = [
             'name' => $event['name'],
+            'date' => $event['date'],
             'exists' => (bool)$eventDb,
             'attended' => $attended,
             'current_costume' => $currentCostume,

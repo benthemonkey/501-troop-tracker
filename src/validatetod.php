@@ -184,7 +184,7 @@ function renderPreview(data, status) {
                 </thead>
                 <tbody>
                     ${trooper.events.map(ev => {
-                        const s = trooperStatus ? trooperStatus.events.find(se => se.name === ev.name) : null;
+                        const s = trooperStatus ? trooperStatus.events.find(se => se.name === ev.name && se.date == ev.date) : null;
                         
                         let costumeDisplay = '';
                         let credDisplay = s?.attended ? '<span class="status-yes">✔</span>' : '<span class="status-no">✘</span>';
