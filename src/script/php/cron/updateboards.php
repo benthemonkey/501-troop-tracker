@@ -24,7 +24,7 @@ if ($result = mysqli_query($conn, $query))
 	while ($db = mysqli_fetch_object($result))
 	{
 		// Make roster
-		$roster = '[b]Roster:[/b]';
+		$roster = '[TABLE][TR][TD][B]Trooper Name[/B][/TD][TD][B]Costume[/B][/TD][TD][B]Status[/B][/TD][/TR]';
 
 		// Count troopers
 		$i = 0;
@@ -45,17 +45,21 @@ if ($result = mysqli_query($conn, $query))
 				}
 
 				$roster .= '
-				-[i]'.getStatus($db2->status).'[/i]: '.$name.' ('.getCostume($db2->costume).')
+				[TR][TD]'.$name.'[/TD][TD]'.getCostume($db2->costume).'[/TD][TD][i]'.getStatus($db2->status).'[/i][/TD][/TR]
 				';
 
 				$i++;
 			}
 		}
+		
+		$roster .= '[/TABLE]';
 
 		// If no troopers
 		if($i == 0) {
 			$roster .= '
-			-No troopers are signed up for this event.
+			
+			[CENTER]No troopers are signed up for this event.[/CENTER]
+			
 			';
 		}
 

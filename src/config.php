@@ -4372,141 +4372,123 @@ function profileExist($id)
 */
 function threadTemplate($eventName, $eventVenue, $location, $date1, $date2, $website, $numberOfAttend, $requestedNumber, $requestedCharacter, $secure, $blasters, $lightsabers, $parking, $mobility, $amenities, $comments, $referred, $eventId, $eventType = 0, $roster = "")
 {
-	global $conn;
-	global $trackerURL;
+    global $conn;
+    global $trackerURL;
 
-	// Get links
-	$link = isLink($eventId);
-	$link2 = isLink2($eventId);
+    $link = isLink($eventId);
+    $link2 = isLink2($eventId);
 
-	$returnString = '';
+    $returnString = '';
 
-	$returnString .= '
-	[b]Event Name:[/b] '.readInput($eventName).'
-	[b]Venue:[/b] '.readInput($eventVenue).'
-	[b]Venue address:[/b] '.readInput($location).'
-	[b]Event Start:[/b] '.date("m/d/y h:i A", strtotime($date1)).'
-	[b]Event End:[/b] '.date("m/d/y h:i A", strtotime($date2)).'';
+    // Header Section
+    $returnString .= '
+    [SIZE=6][B]'.readInput($eventName).'[/B][/SIZE]
+    [SIZE=4][I]'.readInput($eventVenue).'[/I][/SIZE]
+    
+    [HR][/HR]
+    
+    [B]📍 Location:[/B] '.readInput($location).'
+    [B]🗓️ Schedule:[/B] '.date("m/d/y h:i A", strtotime($date1)).' – '.date("h:i A", strtotime($date2)).'';
 
-	// Exclude unimportant information from armor party events
-	if($eventType != 10 && $eventType != 7)
-	{
-		$returnString .= '
-		[b]Event Website:[/b] '.readInput($website).'
-		[b]Expected number of attendees:[/b] '.$numberOfAttend.'
-		[b]Requested number of characters:[/b] '.$requestedNumber.'
-		[b]Requested character types:[/b] '.readInput($requestedCharacter).'
-		[b]Secure changing/staging area:[/b] '.yesNo($secure).'
-		[b]Can troopers carry blasters:[/b] '.yesNo($blasters).'
-		[b]Can troopers carry/bring props like lightsabers and staffs:[/b] '.yesNo($lightsabers).'
-		[b]Is parking available:[/b] '.yesNo($parking).'
-		[b]Is venue accessible to those with limited mobility:[/b] '.yesNo($mobility).'';
-	}
+    if($eventType != 10 && $eventType != 7)
+    {
+        $returnString .= '
+        [B]🔗 Website:[/B] [URL="'.readInput($website).'"]Click here to view[/URL]
+        
+        [TABLE]
+        [TR]
+        [TD][B]Attendees:[/B] '.$numberOfAttend.'[/TD]
+        [TD][B]Requested:[/B] '.$requestedNumber.'[/TD]
+        [TD][B]Parking:[/B] '.yesNo($parking).'[/TD]
+        [/TR]
+        [TR]
+        [TD][B]Blasters:[/B] '.yesNo($blasters).'[/TD]
+        [TD][B]Props/Sabers:[/B] '.yesNo($lightsabers).'[/TD]
+        [TD][B]Accessible:[/B] '.yesNo($mobility).'[/TD]
+        [/TR]
+        [/TABLE]
+        [B]Character Types:[/B] '.readInput($requestedCharacter).'';
+    }
 
-	// Exclude unimportant information from virtual troops
-	if($eventType != 7)
-	{
-		$returnString .= '
-		[b]Amenities available at venue:[/b] '.ifEmpty(readInput($amenities), "No amenities for this event.").'';
-	}
+    if($eventType != 7)
+    {
+        $returnString .= '
+        [B]Changing Area & Amenities:[/B]
+        [QUOTE]'.ifEmpty(readInput($amenities), "No specific amenities listed.").'[/QUOTE]';
+    }
 
+    // THE HEART OF THE POST: Comments
+    $returnString .= '
+    [HR][/HR]
+    [SIZE=5][B]📢 Organizer Comments[/B][/SIZE]
 
-	$returnString .= '
-	[b]Comments:[/b]
-	'.ifEmpty(readInput($comments), "No comments for this event.").'
-	[b]Referred by:[/b] '.ifEmpty(readInput($referred), "Not available").'
+    [INDENT][SIZE=4]'.ifEmpty(readInput($comments), "No additional comments provided.").'[/SIZE][/INDENT]
 
-	'.$roster.'';
+    [COLOR=#777777][I]Referred by: '.ifEmpty(readInput($referred), "N/A").'[/I][/COLOR]
 
-	// Loop through all admin photos
-	$statement = $conn->prepare("
-	    SELECT * FROM uploads
-	    WHERE admin = '1'
-	      AND troopid IN (
-	          SELECT id FROM events
-	          WHERE id = ?
-	            OR (link = ? AND link != 0)
-	            OR (link2 = ? AND link2 != 0)
-	            OR id = ?
-	            OR id = ?
-	      )
-	    ORDER BY date ASC
-	");
+    [HR][/HR]
+    [SIZE=5][B]👥 Event Roster[/B][/SIZE]
+    '.$roster."\n";
 
-	$statement->bind_param("iiiii", $eventId, $link, $link2, $link, $link2);
-	$statement->execute();
+    // Admin Photos
+    $statement = $conn->prepare("SELECT * FROM uploads WHERE admin = '1' AND troopid IN (SELECT id FROM events WHERE id = ? OR (link = ? AND link != 0) OR (link2 = ? AND link2 != 0) OR id = ? OR id = ?) ORDER BY date ASC");
+    $statement->bind_param("iiiii", $eventId, $link, $link2, $link, $link2);
+    $statement->execute();
 
-	if ($result = $statement->get_result())
-	{
-		while ($db = mysqli_fetch_object($result))
-		{
-			$returnString .= '
-			[IMG]'.$trackerURL.'/images/uploads/'.$db->filename.'[/IMG]
-			';
-		}
-	}
+    if ($result = $statement->get_result())
+    {
+        while ($db = mysqli_fetch_object($result))
+        {
+            $returnString .= '[CENTER][IMG]'.$trackerURL.'/images/uploads/'.$db->filename.'[/IMG][/CENTER] ';
+        }
+    }
 
-	$returnString .= '
-	[b][u]Sign Up / Event Roster:[/u][/b]
+    // Call to Action
+    $returnString .= '
+    [HR][/HR]
+    [CENTER][SIZE=6][URL="'.$trackerURL.'/index.php?event=' . $eventId . '"]👉 CLICK HERE TO SIGN UP 👈[/URL][/SIZE][/CENTER]';
 
-	[url]'.$trackerURL.'/index.php?event=' . $eventId . '[/url]';
+    // Linked Shifts/Related Troops (Subtle styling)
+    if($link > 0) {
+        $returnString .= '
+        [HR][/HR]
+        [B][U]Other Shifts Available:[/U][/B]
+        [LIST]';
 
-	if($link > 0) {
-		$returnString .= '
+        $statement = $conn->prepare("SELECT * FROM events WHERE (id = ? OR link = ?) AND id != ? ORDER BY dateStart DESC");
+        $statement->bind_param("iii", $link, $link, $eventId);
+        $statement->execute();
 
-		[b][u]Other Shifts:[/u][/b]
-		';
+        if ($result = $statement->get_result())
+        {
+            while ($db = mysqli_fetch_object($result))
+            {
+                $returnString .= '[*][URL='.$trackerURL.'/index.php?event='.$db->id.'][B]' . date("l", strtotime($db->dateStart)) . '[/B] : ' . date("m/d - h:i A", strtotime($db->dateStart)) . '[/URL]';
+            }
+        }
+        $returnString .= '[/LIST]';
+    }
 
-		$statement = $conn->prepare("SELECT * FROM events WHERE (id = ? OR link = ?) AND id != ? ORDER BY dateStart DESC");
-		$statement->bind_param("iii", $link, $link, $eventId);
-		$statement->execute();
+    // Related Troops logic remains largely the same but cleaned up
+    if($link == 0 && $link2 > 0) {
+        $returnString .= '
+        [HR][/HR]
+        [B][U]Related Troops:[/U][/B]
+        [LIST]';
+        $statement = $conn->prepare("SELECT * FROM events WHERE link2 = ? AND id != ? ORDER BY dateStart DESC");
+        $statement->bind_param("ii", $link2, $eventId);
+        $statement->execute();
+        if ($result = $statement->get_result())
+        {
+            while ($db = mysqli_fetch_object($result))
+            {
+                $returnString .= '[*][URL="'.$trackerURL.'/index.php?event=' . $db->id . '"]' . $db->name . ' (' . date('M d', strtotime($db->dateStart)) . ')[/URL]';
+            }
+        }
+        $returnString .= '[/LIST]';
+    }
 
-		if ($result = $statement->get_result())
-		{
-			while ($db = mysqli_fetch_object($result))
-			{
-				$returnString .= '
-				-[url='.$trackerURL.'/index.php?event='.$db->id.'][b]' . date("l", strtotime($db->dateStart)) . '[/b] : [i]' . date("m/d - h:i A", strtotime($db->dateStart)) . ' - ' . date("h:i A", strtotime($db->dateEnd)) . '[/i] ' .''.$db->name.'[/url]
-				';
-			}
-		}
-
-		$returnString .= '
-		[b]To view all shift event forum posts on one page, view the event page on the Troop Tracker. This forum page will only show this shifts forum posts.[/b]
-		';
-	}
-
-	// Show linked events
-	if($link == 0 && $link2 > 0) {
-		$returnString .= '
-		[b][u]Related Troops:[/u][/b]';
-
-		// Query database for linked events
-		$statement = $conn->prepare("SELECT * FROM events WHERE link2 = ? AND id != ? ORDER BY dateStart DESC");
-		$statement->bind_param("ii", $link2, $eventId);
-		$statement->execute();
-
-		if ($result = $statement->get_result())
-		{
-			while ($db = mysqli_fetch_object($result))
-			{
-				$returnString .= '
-				[url="'.$trackerURL.'/index.php?event=' . $db->id . '"]' . (isLink($db->id) > 0 ? '[b]'.date('l', strtotime($db->dateStart)).'[/b] - ' . date('M d, Y', strtotime($db->dateStart)) . ' ' . date('h:i A', strtotime($db->dateStart)) . ' - ' . date('h:i A', strtotime($db->dateEnd)) . ' '. $db->name : date('M d, Y', strtotime($db->dateStart)) . ': ' . $db->name) .'[/url]
-				';
-			}
-		}
-
-		$returnString .= '
-		[b]This event is connected to other related events; therefore, sign-up limits may apply.[/b]
-
-		[b]To view all related event forum posts on one page, view the event page on the Troop Tracker. This forum page will only show this events forum posts.[/b]
-		';
-	} else if($link > 0 && $link2 > 0) {
-		$returnString .= '
-		[b]This event is connected to other related events; therefore, sign-up limits may apply.[/b]';
-	}
-
-	return $returnString;
+    return $returnString;
 }
 
 /**
