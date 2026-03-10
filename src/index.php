@@ -347,6 +347,17 @@ if (isset($_GET['action']) && $_GET['action'] == "account" && loggedIn()) {
 				<input type="text" name="name" id="name" value="' . getName($_SESSION['id']) . '" />
 				<input type="submit" name="nameButton" id="nameButton" value="Update" />
 		</form>
+        
+        <p>
+            To change your TKID prefix, you need to update your "primary" costume in the 501st database:
+            <ol>
+                <li>Go to the <a href="https://www.501st.com/holocron/member/legacy" target="_blank" style="text-decoration: underline">501st Holocron</a></li>
+                <li>Select "YOUR PROFILE DATA" in the navigation</li>
+                <li>Click "Edit" next to "Your 501st Approved Costumes"</li>
+                <li>Change your Primary Costume</li>
+            </ol>
+            It may take up to a week for the change to take effect.
+        </p>
 	</div>
 
 	<div id="changephone" style="display:none;">

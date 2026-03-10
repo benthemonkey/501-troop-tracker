@@ -11,7 +11,7 @@ $GLOBALS['_function_cache'] = [
     'getTrooperSquad' => [],
     'getTrooperForum' => [],
     'readTKNumber' => [],
-    '501st_costumes' => null,  // Cache entire 501st_costumes table
+    '501st_troopers' => null,  // Cache entire 501st_troopers table
     'troopers_club_ids' => []  // Cache club-specific IDs from troopers table
 ];
 
@@ -3765,16 +3765,13 @@ function readTKNumber($tkid, $squad, $trooperid)
 		return $result;
 	} else {
 		// 501st member - load entire 501st_costumes table once
-		if ($GLOBALS['_function_cache']['501st_costumes'] === null) {
-			$GLOBALS['_function_cache']['501st_costumes'] = [];
+		if ($GLOBALS['_function_cache']['501st_troopers'] === null) {
+			$GLOBALS['_function_cache']['501st_troopers'] = [];
 
-			$result = $conn->query("SELECT legionid, prefix FROM 501st_costumes");
+			$result = $conn->query("SELECT legionid, formattedlegionid FROM 501st_troopers");
 			if ($result) {
 				while ($row = $result->fetch_assoc()) {
-					// only take first entry
-					if (!isset($GLOBALS['_function_cache']['501st_costumes'][$row['legionid']])) {
-						$GLOBALS['_function_cache']['501st_costumes'][$row['legionid']] = $row['prefix'];
-					}
+					$GLOBALS['_function_cache']['501st_troopers'][$row['legionid']] = $row['formattedlegionid'];
 				}
 				$result->free();
 			}
@@ -3782,8 +3779,8 @@ function readTKNumber($tkid, $squad, $trooperid)
 
 		// Look up prefix from cached table
 		$prefix = "TK";
-		if (isset($GLOBALS['_function_cache']['501st_costumes'][$tkid])) {
-			$prefix = $GLOBALS['_function_cache']['501st_costumes'][$tkid];
+		if (isset($GLOBALS['_function_cache']['501st_troopers'][$tkid])) {
+			$prefix = substr($GLOBALS['_function_cache']['501st_troopers'][$tkid], 0, 2);
 		}
 
 		$result = $prefix . $tkid;

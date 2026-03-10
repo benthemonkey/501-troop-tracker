@@ -35,7 +35,7 @@ $conn->query("TRUNCATE TABLE 501st_troopers");
 $conn->query("TRUNCATE TABLE 501st_costumes");
 
 // Prepare database insertion queries
-$trooperStmt = $conn->prepare("INSERT INTO 501st_troopers (legionid, name, thumbnail, link, squad, garrison, approved, status, standing, joindate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+$trooperStmt = $conn->prepare("INSERT INTO 501st_troopers (legionid, formattedlegionid, name, thumbnail, link, squad, garrison, approved, status, standing, joindate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 $costumeStmt = $conn->prepare("INSERT INTO 501st_costumes (legionid, costumeid, prefix, costumename, photo, thumbnail, bucketoff) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
 $query = "SELECT tkid FROM troopers WHERE tkid != 0 AND approved = 1 AND p501 < 3";
@@ -60,8 +60,9 @@ if ($result = mysqli_query($conn, $query))
     $convertedMemberStanding = convertMemberStanding($memberData['memberStanding']);
 
     $trooperStmt->bind_param(
-        "ssssiiiiss",
+        "sssssiiiiss",
         $legionId,
+        $memberData['formattedLegionId'],
         $memberData['fullName'],
         $memberData['primaryThumbnail'],
         $memberData['profileUrl'],

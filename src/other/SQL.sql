@@ -44,6 +44,7 @@ CREATE TABLE `501st_costumes` (
 
 CREATE TABLE `501st_troopers` (
   `legionid` int NOT NULL,
+  `formattedlegionid` varchar(15) NOT NULL,
   `name` varchar(255) NOT NULL,
   `thumbnail` varchar(255) NOT NULL,
   `link` varchar(255) NOT NULL,
