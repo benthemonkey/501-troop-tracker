@@ -4385,7 +4385,7 @@ function threadTemplate($eventName, $eventVenue, $location, $date1, $date2, $web
     [HR][/HR]
     
     [B]📍 Location:[/B] '.readInput($location).'
-    [B]🗓️ Schedule:[/B] '.date("m/d/y h:i A", strtotime($date1)).' – '.date("h:i A", strtotime($date2)).'';
+    [B]🗓️ Schedule:[/B] '.date("D m/d/y h:i A", strtotime($date1)).' – '.date("h:i A", strtotime($date2)).'';
 
     if($eventType != 10 && $eventType != 7)
     {
