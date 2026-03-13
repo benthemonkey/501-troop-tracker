@@ -4403,15 +4403,18 @@ function threadTemplate($eventName, $eventVenue, $location, $date1, $date2, $web
         [TD][B]Props/Sabers:[/B] '.yesNo($lightsabers).'[/TD]
         [TD][B]Accessible:[/B] '.yesNo($mobility).'[/TD]
         [/TR]
-        [/TABLE]
-        [B]Character Types:[/B] '.readInput($requestedCharacter).'';
+        [/TABLE]';
+		
+		if (!empty($requestedCharacter)) {
+            $returnString .= '[B]Character Types:[/B] '.readInput($requestedCharacter);
+		}
     }
 
-    if($eventType != 7)
+    if($eventType != 7 && !empty($amenities))
     {
         $returnString .= '
         [B]Changing Area & Amenities:[/B]
-        [QUOTE]'.ifEmpty(readInput($amenities), "No specific amenities listed.").'[/QUOTE]';
+        [QUOTE]'.readInput($amenities).'[/QUOTE]';
     }
 
     // THE HEART OF THE POST: Comments
