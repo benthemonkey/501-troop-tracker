@@ -348,6 +348,11 @@ $(document).ready(function () {
 	
 	// Add select2 to DOM
 	selectAdd();
+	
+	// Check if the URL hash matches #confirmtroops
+	if (window.location.hash === "#confirmtroops") {
+		$("#largeLogin").show();
+	}
 
 	// Load add friend
 	// if ($('#add-friend-form').length) {

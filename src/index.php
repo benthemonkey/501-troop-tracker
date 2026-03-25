@@ -211,6 +211,11 @@ if (loggedIn()) {
 
 echo '</div>';
 
+// Big LOG IN button when coming from the "confirm your troops" link
+if (!loggedIn()) {
+    echo '<div class="tm-section-header" id="largeLogin" style="display:none"><a href="index.php?action=login" class="button" style="font-size:2.2rem; padding:20px">Login to Confirm Troops</a></div>';
+}
+
 // Show the account page
 if (isset($_GET['action']) && $_GET['action'] == "account" && loggedIn()) {
     // Theme Button Submit
@@ -3787,7 +3792,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 						<p>Amenities?</p>
 						<input type="text" name="amenities" id="amenities" />
 
-						<p>Additional Comments:</p>
+						<p>Additional Comments:<br/><em>We recommend including "Arrival time: _____" at the start of your comment.</em></p>
 						<a href="javascript:void(0);" onclick="javascript:bbcoder(\'B\', \'comments\')" class="button">Bold</a>
 						<a href="javascript:void(0);" onclick="javascript:bbcoder(\'I\', \'comments\')" class="button">Italic</a>
 						<a href="javascript:void(0);" onclick="javascript:bbcoder(\'U\', \'comments\')" class="button">Underline</a>
@@ -4124,7 +4129,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 				<div style="overflow-x: auto;">
 				<table border="1" id="userListTable" name="userListTable">
 				<tr>
-					<th>Name</th>	<th>E-mail</th>	<th>Forum ID (FG)</th>	<th>Forum ID (RL)</th>	<th>Mando CAT</th>	<th>SG #</th>	<th>Phone</th>	<th>Squad</th>	<th>TKID</th>
+					<th>Name</th>	<th>E-mail</th>	<th>Forum ID (MWG)</th>	<th>Forum ID (RL)</th>	<th>Mando CAT</th>	<th>SG #</th>	<th>Phone</th>	<th>Squad</th>	<th>TKID</th>
 				</tr>
 					<tr id="userList" name="userList">
 						<td id="nameTable"></td>	<td id="emailTable"></td> <td id="forumTable"></td> <td id="rebelforumTable"></td> <td id="mandoidTable"></td>	<td id="sgidTable"></td>	<td id="phoneTable"></td>	<td id="squadTable"></td>	<td id="tkTable"></td>
@@ -4521,7 +4526,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 				<p>Amenities?</p>
 				<input type="text" name="amenities" id="amenities" value="' . copyEvent($eid, $amenities) . '" />
 
-				<p>Additional Comments:</p>
+				<p>Additional Comments:<br/><em>We recommend including "Arrival time: _____" at the start of your comment.</em></p>
 				<a href="javascript:void(0);" onclick="javascript:bbcoder(\'B\', \'comments\')" class="button">Bold</a>
 				<a href="javascript:void(0);" onclick="javascript:bbcoder(\'I\', \'comments\')" class="button">Italic</a>
 				<a href="javascript:void(0);" onclick="javascript:bbcoder(\'U\', \'comments\')" class="button">Underline</a>
@@ -6793,7 +6798,7 @@ echo '
 
 echo '
 <!-- External JS File -->
-<script type="text/javascript" src="script/js/main.js?v=16"></script>
+<script type="text/javascript" src="script/js/main.js?v=17"></script>
 </body>
 </html>';
 
