@@ -67,6 +67,19 @@ if (function_exists('\Sentry\init') && isset($sentryPHPDSN) && !empty($sentryPHP
     error_log('Sentry SDK not loaded. Check if composer install was run.');
 }
 
+/* START XENFORO INIT */
+if (file_exists($forumDirectory . '/src/XF.php')) {
+	require($forumDirectory . '/src/XF.php');
+} else {
+    die("Error: Could not find XenForo at " . $forumDirectory);
+}
+ 
+\XF::start($forumDirectory);
+$app = \XF::setupApp('XF\Api\App');
+$userRepo = $app->repository('XF:User');
+$adminUser = $userRepo->getVisitor(xenforoAPI_userID);
+/* END XENFORO INIT */
+
 // Extract valid squadIDs from the array
 $validSquadIDs = array_merge([0], array_column($squadArray, 'squadID'));
 
@@ -1702,30 +1715,37 @@ function createPost($id, $message, $userID = xenforoAPI_userID)
 */
 function editPost($id, $message)
 {
-	global $forumURL;
+	global $adminUser;
+    $app = \XF::app();
 
-	// Edit Post
-	$curl = curl_init();
+	return \XF::asVisitor($adminUser, function() use ($adminUser, $id, $message, $app) {
+        // 1. Find the post entity
+        $post = $app->find('XF:Post', $id);
 
-	curl_setopt_array($curl, [
-	  CURLOPT_URL => $forumURL . "api/posts/" . $id,
-	  CURLOPT_POST => 1,
-	  CURLOPT_POSTFIELDS => "message=" . urlencode($message) . "&api_bypass_permissions=1",
-	  CURLOPT_CUSTOMREQUEST => "POST",
-	  CURLOPT_RETURNTRANSFER => true,
-	  CURLOPT_ENCODING => "",
-	  CURLOPT_TIMEOUT => 0,
-	  CURLOPT_HTTPHEADER => [
-	    "XF-Api-Key: " . xenforoAPI_superuser,
-	    "XF-Api-User: " . xenforoAPI_userID,
-	  ],
-	]);
+        if (!$post) {
+            return ['success' => false, 'error' => 'Post not found'];
+        }
 
-	$response = curl_exec($curl);
+        // 2. Setup the Post Editor Service
+        $editor = $app->service('XF:Post\Editor', $post);
 
-	curl_close($curl);
+        // 3. Set the "Automated" flag 
+        $editor->setIsAutomated();
 
-	return json_decode($response, true);
+        // 4. Set the new message content
+        $editor->setMessage($message);
+
+        // 5. Validate and Save
+        if ($editor->validate($errors)) {
+            $editor->save();
+            return ['success' => true, 'post_id' => $id];
+        } else {
+            return [
+                'success' => false, 
+                'errors' => array_map(function($e) { return (string)$e; }, $errors)
+            ];
+        }
+    });
 }
 
 /**
