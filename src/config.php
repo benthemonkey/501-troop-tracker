@@ -1737,7 +1737,11 @@ function editPost($id, $message)
 
         // 5. Validate and Save
         if ($editor->validate($errors)) {
+			// addressing bug about REMOTE_ADDR
+			$originalIp = $_SERVER['REMOTE_ADDR'] ?? null;
+			$_SERVER['REMOTE_ADDR'] = '127.0.0.1';
             $editor->save();
+			$_SERVER['REMOTE_ADDR'] = $originalIp;
             return ['success' => true, 'post_id' => $id];
         } else {
             return [
