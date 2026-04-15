@@ -3814,7 +3814,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 							<option value="2">PR</option>
 							<!-- <option value="3">Disney</option> -->
 							<!-- <option value="11">LFL</option> -->
-							<option value="4">Convention</option>
+							<option value="4">Convention (Reserved for major cons like C2E2 / FanFest)</option>
 							<option value="9">Hospital</option>
 							<option value="5">Wedding</option>
 							<option value="6">Birthday Party</option>
@@ -4549,7 +4549,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
 					<option value="2" ' . copyEventSelect($eid, $label, 2) . '>PR</option>
 					<!-- <option value="3" ' . copyEventSelect($eid, $label, 3) . '>Disney</option> -->
 					<!-- <option value="11" ' . copyEventSelect($eid, $label, 11) . '>LFL</option> -->
-					<option value="4" ' . copyEventSelect($eid, $label, 4) . '>Convention</option>
+					<option value="4" ' . copyEventSelect($eid, $label, 4) . '>Convention (Reserved for major cons like C2E2 / FanFest)</option>
 					<option value="9" ' . copyEventSelect($eid, $label, 9) . '>Hospital</option>
 					<option value="5" ' . copyEventSelect($eid, $label, 5) . '>Wedding</option>
 					<option value="6" ' . copyEventSelect($eid, $label, 6) . '>Birthday Party</option>
