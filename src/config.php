@@ -941,7 +941,10 @@ function showBBcodes($text)
 		'~\[size=(.*?)\](.*?)\[/size\]~s',
 		'~\[color=(.*?)\](.*?)\[/color\]~s',
 		'~\[url\]((?:ftp|https?)://.*?)\[/url\]~s',
-		'~\[img\](https?://.*?\.(?:jpg|jpeg|gif|png|bmp))\[/img\]~s'
+		'~\[img\](https?://.*?\.(?:jpg|jpeg|gif|png|bmp))\[/img\]~s',
+		'~\[table\](.*?)\[/table\]~s',
+		'~\[tr\](.*?)\[/tr\]~s',
+		'~\[td\](.*?)\[/td\]~s'
 	);
 
 	// HTML tags to replace BBcode
@@ -954,7 +957,10 @@ function showBBcodes($text)
 		'<span style="font-size:$1px;">$2</span>',
 		'<span style="color:$1;">$2</span>',
 		'<a href="$1">$1</a>',
-		'<img src="$1" alt="" />'
+		'<img src="$1" alt="" />',
+		'<table>$1</table>',
+		'<tr>$1</tr>',
+		'<td>$1</td>'
 	);
 
 	// Replacing the BBcodes with corresponding HTML tags
