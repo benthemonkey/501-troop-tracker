@@ -965,6 +965,9 @@ function showBBcodes($text)
 		'<th>$1</th>'
 	);
 
+	// Strip whitespace around table BBcode tags so nl2br doesn't insert <br> between table elements
+	$text = preg_replace('~\s*(\[/?(?:table|tr|td|th)[^\]]*\])\s*~', '$1', $text);
+
 	// Replacing the BBcodes with corresponding HTML tags
 	$text = preg_replace($find, $replace, $text);
 
