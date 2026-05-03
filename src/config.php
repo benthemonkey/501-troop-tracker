@@ -26,7 +26,7 @@ $GLOBALS['_function_cache'] = [
 // error_reporting(E_ERROR | E_PARSE);
 
 // Set time zone
-date_default_timezone_set("America/New_York");
+date_default_timezone_set("America/Chicago");
 
 // PHP Mail namespace
 use PHPMailer\PHPMailer\PHPMailer;
@@ -67,18 +67,6 @@ if (function_exists('\Sentry\init') && isset($sentryPHPDSN) && !empty($sentryPHP
     error_log('Sentry SDK not loaded. Check if composer install was run.');
 }
 
-/* START XENFORO INIT */
-if (file_exists($forumDirectory . '/src/XF.php')) {
-	require($forumDirectory . '/src/XF.php');
-} else {
-    die("Error: Could not find XenForo at " . $forumDirectory);
-}
- 
-\XF::start($forumDirectory);
-$app = \XF::setupApp('XF\Api\App');
-$userRepo = $app->repository('XF:User');
-$adminUser = $userRepo->getVisitor(xenforoAPI_userID);
-/* END XENFORO INIT */
 
 // Extract valid squadIDs from the array
 $validSquadIDs = array_merge([0], array_column($squadArray, 'squadID'));
@@ -116,16 +104,16 @@ $mainCostumes = "'N/A', 'Command Staff', 'Handler'";
 require 'custom.php';
 
 /**
- * This is used to format the time to Eastern Standard Time
+ * This is used to format the time to Default Timezone (set above)
  *
  * @param string $date This is the format the date should be displayed in
  * @param string $format This is the date to be formatted
- * @return string Returns date and Eastern Standard Time
+ * @return string Returns date in default time zone
 */
 function formatTime($date, $format)
 {
 	$datetime = new DateTime($date, new DateTimeZone('UTC'));
-	$datetime->setTimezone(new DateTimeZone('America/New_York'));
+	$datetime->setTimezone(new DateTimeZone(date_default_timezone_get()));
 	return $datetime->format($format);
 }
 
@@ -1726,7 +1714,21 @@ function createPost($id, $message, $userID = xenforoAPI_userID)
 */
 function editPost($id, $message)
 {
-	global $adminUser;
+    global $forumDirectory;
+
+    static $adminUser = null;
+    if ($adminUser === null) {
+        if (!file_exists($forumDirectory . '/src/XF.php')) {
+            return ['success' => false, 'error' => 'XenForo not found'];
+        }
+        $tz = date_default_timezone_get();
+        require_once($forumDirectory . '/src/XF.php');
+        \XF::start($forumDirectory);
+        $xfApp = \XF::setupApp('XF\Api\App');
+        $adminUser = $xfApp->repository('XF:User')->getVisitor(xenforoAPI_userID);
+        date_default_timezone_set($tz);
+    }
+
     $app = \XF::app();
 
 	return \XF::asVisitor($adminUser, function() use ($adminUser, $id, $message, $app) {
