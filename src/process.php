@@ -2551,6 +2551,8 @@ if(isset($_GET['do']) && $_GET['do'] == "requestaccess")
 				}
 			}
 			
+			sendEmail($webmasterEmail, "Garrison Webmaster", "Request for Access Submitted for " . $_POST['name'], "Go look at trooper requests to review access.");
+			
 			echo '<li>Request submitted! You will receive an e-mail when your request is approved or denied.</li>';
 		}
 
