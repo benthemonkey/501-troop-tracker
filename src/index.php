@@ -6401,8 +6401,6 @@ else if (isset($_GET['event']) && !loggedIn()) {
                 if ($i > 0) {
                     echo '
 						</div>
-						<input type="submit" name="submitConfirmList" id="submitConfirmList" value="I attended these troops" />
-						<input type="submit" name="submitConfirmListDelete" id="submitConfirmListDelete" value="I did NOT attend these troops" />
 						<p>Attended Costume:</p>
 						<select name="costume" id="costumeChoice">';
 
@@ -6426,8 +6424,10 @@ else if (isset($_GET['event']) && !loggedIn()) {
 
                     echo '
 						</select>
+						<p>If your costume is not listed, please notify the garrison web master before confirming.</p>
+						<input type="submit" name="submitConfirmList" id="submitConfirmList" value="I attended these troops" />
+						<input type="submit" name="submitConfirmListDelete" id="submitConfirmListDelete" value="I did NOT attend these troops">
 					</form>
-					<p>If your costume is not listed, please notify the garrison web master before confirming.</p>
 					</div>';
                 }
 
