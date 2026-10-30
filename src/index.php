@@ -4819,7 +4819,7 @@ if (isset($_GET['action']) && $_GET['action'] == "faq") {
 
 	<h3>I need information on joining the 501st Legion.</h3>
 	<p>
-		<a href="https://databank.501st.com/databank/Join_Us" target="_blank">Click here to learn how to join.</a>
+		<a href="https://www.501st.com/how-to-join/" target="_blank">Click here to learn how to join.</a>
 	</p>
 
 	<h3>Contact Garrison Web Master</h3>
