@@ -69,7 +69,7 @@ $mediaRoot = "";
 $forumURL = "https://www.fl501st.com/boards/";
 
 /**
- * 501st API Garrison ID (Find it here: https://www.501st.com/memberAPI/v3/garrisons)
+ * 501st API Garrison ID (Find it here: https://api.501st.com/garrisons)
 */
 
 $garrisonIdAPI = 9;

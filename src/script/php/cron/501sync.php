@@ -30,34 +30,74 @@ if ($result && $db = $result->fetch_object()) {
 // Set unlimited execution time (0 means no limit)
 set_time_limit(0);
 
-// Reset databases
-$conn->query("TRUNCATE TABLE 501st_troopers");
-$conn->query("TRUNCATE TABLE 501st_costumes");
-
-// Prepare database insertion queries
-$trooperStmt = $conn->prepare("INSERT INTO 501st_troopers (legionid, formattedlegionid, name, thumbnail, link, squad, garrison, approved, status, standing, joindate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-$costumeStmt = $conn->prepare("INSERT INTO 501st_costumes (legionid, costumeid, prefix, costumename, photo, thumbnail, bucketoff) VALUES (?, ?, ?, ?, ?, ?, ?)");
+// Fetch every member before touching the tables, so a 501st API outage keeps the last good data
+$context = stream_context_create(['http' => ['timeout' => 30]]);
+$members = [];
+$fetched = 0;
+$failed = 0;
+$consecutiveFailures = 0;
+$lastError = 'none';
 
 $query = "SELECT tkid FROM troopers WHERE tkid != 0 AND approved = 1 AND p501 < 3";
 if ($result = mysqli_query($conn, $query))
 {
     while ($db = mysqli_fetch_object($result))
-	{
-    
-    $legionId = $db->tkid;
+    {
+        $legionId = $db->tkid;
 
-    // Fetch detailed member data
-    $json2 = file_get_contents("https://www.501st.com/memberAPI/v3/legionId/$legionId/costumes");
-    $memberData = json_decode($json2, true);
+        // Fetch detailed member data
+        $json2 = @file_get_contents("https://api.501st.com/legionId/$legionId/costumes", false, $context);
+        $memberData = $json2 === false ? null : json_decode($json2, true);
 
-    if (!$memberData) {
-        continue;
+        if (!$memberData) {
+            $lastError = $json2 === false ? (error_get_last()['message'] ?? 'request failed') : 'response was not JSON';
+            $failed++;
+            $consecutiveFailures++;
+
+            // The API is down; stop instead of waiting on every remaining member
+            if ($consecutiveFailures >= 10) {
+                break;
+            }
+
+            continue;
+        }
+
+        $consecutiveFailures = 0;
+        $fetched++;
+
+        // Unknown, retired or classified members come back as only {"memberStatus": "Classified Record"}
+        if (empty($memberData['legionId'])) {
+            continue;
+        }
+
+        $members[$legionId] = $memberData;
     }
-    
+}
+
+// Most fetches failing means the API is down or changed: leave the tables and sync date alone so the next run retries.
+// Thrown rather than printed so it reaches Sentry and the cron output.
+if ($fetched === 0 || $failed > $fetched) {
+    throw new RuntimeException("501st sync aborted: $fetched fetched, $failed failed (last error: $lastError). Existing data kept.");
+}
+
+// Prepare database insertion queries
+$trooperStmt = $conn->prepare("INSERT INTO 501st_troopers (legionid, formattedlegionid, name, thumbnail, link, squad, garrison, approved, status, standing, joindate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+$costumeStmt = $conn->prepare("INSERT INTO 501st_costumes (legionid, costumeid, prefix, costumename, photo, thumbnail, bucketoff) VALUES (?, ?, ?, ?, ?, ?, ?)");
+
+// Replace the data in one transaction (DELETE, not TRUNCATE, which would commit immediately)
+$conn->begin_transaction();
+$conn->query("DELETE FROM 501st_troopers");
+$conn->query("DELETE FROM 501st_costumes");
+
+foreach ($members as $legionId => $memberData)
+{
     $convertedSquadId = convertSquadId($memberData['squadId']);
     $convertedMemberApproved = convertMemberApproved( $memberData['memberApproved']);
     $convertedMemberStatus = convertMemberStatus($memberData['memberStatus']);
     $convertedMemberStanding = convertMemberStanding($memberData['memberStanding']);
+
+    // The API returns ISO 8601 (2017-05-14T22:41:54.000Z), which strict MySQL rejects for DATETIME
+    $joinDate = empty($memberData['joinDate']) ? null : date('Y-m-d H:i:s', strtotime($memberData['joinDate']));
 
     $trooperStmt->bind_param(
         "sssssiiiiss",
@@ -71,27 +111,32 @@ if ($result = mysqli_query($conn, $query))
         $convertedMemberApproved,
         $convertedMemberStatus,
         $convertedMemberStanding,
-        $memberData['joinDate']
+        $joinDate
     );
     $trooperStmt->execute();
 
     if (!empty($memberData['costumes'])) {
-        foreach ($memberData['costumes'] as $costume) {
+        foreach ($memberData['costumes'] as $index => $costume) {
+            // api.501st.com has no costume ID; store the position in the member's list so ORDER BY costumeid stays stable
+            $costumeId = $index + 1;
+            $bucketOff = $costume['bucketOffPhoto'] ?? '';
+
             $costumeStmt->bind_param(
                 "sssssss",
                 $legionId,
-                $costume['costumeId'],
-                $costume['prefix'],
+                $costumeId,
+                $costume['designation'],
                 $costume['costumeName'],
-                $costume['photoURL'],
+                $costume['photoUrl'],
                 $costume['thumbnail'],
-                $costume['bucketOffPhoto']
+                $bucketOff
             );
             $costumeStmt->execute();
         }
     }
 }
-}
+
+$conn->commit();
 
 // Close statements
 $trooperStmt->close();

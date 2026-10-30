@@ -2704,7 +2704,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
                     echo '
 					<tr name="row_' . $db->id . '">
 						<td>
-							' . (isset($_GET['squad']) && (in_array($_GET['squad'], $validSquadIDs) || $_GET['squad'] == "all") ? (ifIn501Roster($db->tkid, $_GET['squad']) ? '' : '<a href="https://www.501st.com/memberAPI/v3/legionId/' . $db->tkid . '" target="_blank">(?)</a> ') : '') . '<a href="index.php?profile=' . $db->id . '" target="_blank">' . $db->name . '</a>
+							' . (isset($_GET['squad']) && (in_array($_GET['squad'], $validSquadIDs) || $_GET['squad'] == "all") ? (ifIn501Roster($db->tkid, $_GET['squad']) ? '' : '<a href="https://api.501st.com/legionId/' . $db->tkid . '" target="_blank">(?)</a> ') : '') . '<a href="index.php?profile=' . $db->id . '" target="_blank">' . $db->name . '</a>
 						</td>
 
 						<td>
