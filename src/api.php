@@ -132,7 +132,7 @@ else
 		$info = pathinfo("images/uploads/".$item["fileName"]."");
 
 		echo '
-		<img class="slideshow" src="images/uploads/resize/'.$info['filename'].'.jpg" width="100%" height="100%">';
+		<img class="slideshow" src="' . $mediaRoot . 'images/uploads/resize/'.$info['filename'].'.jpg" width="100%" height="100%">';
 	}
 	
 	echo '

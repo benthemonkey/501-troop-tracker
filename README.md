@@ -56,6 +56,13 @@ $webmasterEmail = "gwm@fl501st.com";
 $trackerURL = "https://www.fl501st.com/troop-tracker";
 
 /**
+ * mediaRoot: Prefix for uploaded photo URLs (images/uploads). Leave empty to serve them from this server.
+ * For local development, set it to the production tracker URL with a trailing slash to show production's photos.
+*/
+
+$mediaRoot = "";
+
+/**
  * forumURL: The forum endpoint for the API
 */
 
