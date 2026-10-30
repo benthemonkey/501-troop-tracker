@@ -678,7 +678,7 @@ if (isset($_GET['profile']) && loggedIn()) {
                 while ($db = mysqli_fetch_object($result)) {
                     echo '
 					<div class="container-image">
-						<a href="images/uploads/' . $db->filename . '" data-lightbox="photosadmin" data-title="Uploaded by ' . getName($db->trooperid) . '" id="photo' . $db->id . '"><img src="images/uploads/resize/' . getFileName($db->filename) . '.jpg" class="image-c" /></a>
+						<a href="' . $mediaRoot . 'images/uploads/' . $db->filename . '" data-lightbox="photosadmin" data-title="Uploaded by ' . getName($db->trooperid) . '" id="photo' . $db->id . '"><img src="' . $mediaRoot . 'images/uploads/resize/' . getFileName($db->filename) . '.jpg" class="image-c" /></a>
 						
 						<p class="container-text">
 							<a href="index.php?action=editphoto&id=' . $db->id . '">Edit</a>
@@ -4842,7 +4842,7 @@ if (isset($_GET['action']) && $_GET['action'] == "editphoto" && loggedIn()) {
 		<h3>Edit Photo: ' . $db->filename . '</h3>
 		
 		<p>
-			<img src="images/uploads/' . $db->filename . '" width="200px" height="200px" />
+			<img src="' . $mediaRoot . 'images/uploads/' . $db->filename . '" width="200px" height="200px" />
 		</p>
 
 		<p>
@@ -5452,7 +5452,7 @@ if (isset($_GET['event']) && loggedIn()) {
 
                             echo '
 							<div class="container-image">
-								<a href="images/uploads/' . $db2->filename . '" data-lightbox="photosadmin" data-title="Uploaded by ' . getName($db2->trooperid) . '" id="photo' . $db2->id . '"><img src="images/uploads/' . $db2->filename . '" class="image-c" /></a>
+								<a href="' . $mediaRoot . 'images/uploads/' . $db2->filename . '" data-lightbox="photosadmin" data-title="Uploaded by ' . getName($db2->trooperid) . '" id="photo' . $db2->id . '"><img src="' . $mediaRoot . 'images/uploads/' . $db2->filename . '" class="image-c" /></a>
 								
 								<p class="container-text">';
 
@@ -5821,7 +5821,7 @@ if (isset($_GET['event']) && loggedIn()) {
 
                         echo '
 						<div class="container-image">
-							<a href="images/uploads/' . $db->filename . '" data-lightbox="photosadmin" data-title="Uploaded by ' . getName($db->trooperid) . '" id="photo' . $db->id . '"><img src="images/uploads/resize/' . getFileName($db->filename) . '.jpg" class="image-c" /></a>
+							<a href="' . $mediaRoot . 'images/uploads/' . $db->filename . '" data-lightbox="photosadmin" data-title="Uploaded by ' . getName($db->trooperid) . '" id="photo' . $db->id . '"><img src="' . $mediaRoot . 'images/uploads/resize/' . getFileName($db->filename) . '.jpg" class="image-c" /></a>
 							
 							<p class="container-text">
 								<a href="index.php?action=editphoto&id=' . $db->id . '">Edit</a>
@@ -6504,7 +6504,7 @@ else if (isset($_GET['event']) && !loggedIn()) {
             if ($result = $statement->get_result()) {
                 while ($db = mysqli_fetch_object($result)) {
                     echo '<div class="container-image">
-					<a href="images/uploads/' . $db->filename . '" data-lightbox="photo" data-title="Uploaded by ' . getName($db->trooperid) . ' on ' . getEventTitle($db->troopid, true) . '."><img src="images/uploads/resize/' . getFileName($db->filename) . '.jpg" class="image-c" /></a>
+					<a href="' . $mediaRoot . 'images/uploads/' . $db->filename . '" data-lightbox="photo" data-title="Uploaded by ' . getName($db->trooperid) . ' on ' . getEventTitle($db->troopid, true) . '."><img src="' . $mediaRoot . 'images/uploads/resize/' . getFileName($db->filename) . '.jpg" class="image-c" /></a>
                     </div>';
 
                     // Increment

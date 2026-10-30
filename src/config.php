@@ -47,6 +47,9 @@ $calendar = new Calendar();
 // Include credential file
 require 'cred.php';
 
+// Prefix for uploaded photo URLs (see $mediaRoot in cred.php); empty serves them from this server
+$mediaRoot = $mediaRoot ?? '';
+
 // Initialize Sentry for error monitoring (function_exists, NOT class_exists!)
 if (function_exists('\Sentry\init') && isset($sentryPHPDSN) && !empty($sentryPHPDSN)) {
     \Sentry\init([
