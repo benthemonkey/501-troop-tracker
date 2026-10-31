@@ -3786,9 +3786,16 @@ if(isset($_GET['do']) && $_GET['do'] == "signup")
 	// When we receive a submission for an event sign up...
 	if(isset($_POST['submitSignUp']))
 	{
+		// An expired session would otherwise save a sign-up with no trooper
+		if(!loggedIn())
+		{
+			echo json_encode(array('success' => 'failed', 'data' => 'You have been logged out. Please log in again, then sign up.'));
+			exit;
+		}
+
 		// Set trooper ID
 		$trooperID = 0;
-		
+
 		// Set up success message
 		$success = "success";
 		$success_message = "Success!";
