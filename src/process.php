@@ -1967,7 +1967,7 @@ if(isset($_GET['do']) && $_GET['do'] == "getuser" && loggedIn())
 				}
 				else if(in_array($db->squad, $validSquadIDs))
 				{
-					$link = 'https://www.501st.com/memberAPI/v3/legionId/' . $db->tkid;
+					$link = 'https://api.501st.com/legionId/' . $db->tkid;
 				}
 				
 				// Array variables

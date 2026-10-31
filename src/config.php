@@ -4198,7 +4198,7 @@ function profileTop($id, $tkid, $name, $squad, $forum, $phone)
 	{
 		echo '
 		<p style="text-align: center;">
-			<img src="https://www.501st.com/memberdata/templates/tk_head.jpg" />
+			<img src="images/tk_head.jpg" />
 		</p>';
 	}
 

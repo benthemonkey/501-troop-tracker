@@ -2704,7 +2704,7 @@ if (isset($_GET['action']) && $_GET['action'] == "commandstaff") {
                     echo '
 					<tr name="row_' . $db->id . '">
 						<td>
-							' . (isset($_GET['squad']) && (in_array($_GET['squad'], $validSquadIDs) || $_GET['squad'] == "all") ? (ifIn501Roster($db->tkid, $_GET['squad']) ? '' : '<a href="https://www.501st.com/memberAPI/v3/legionId/' . $db->tkid . '" target="_blank">(?)</a> ') : '') . '<a href="index.php?profile=' . $db->id . '" target="_blank">' . $db->name . '</a>
+							' . (isset($_GET['squad']) && (in_array($_GET['squad'], $validSquadIDs) || $_GET['squad'] == "all") ? (ifIn501Roster($db->tkid, $_GET['squad']) ? '' : '<a href="https://api.501st.com/legionId/' . $db->tkid . '" target="_blank">(?)</a> ') : '') . '<a href="index.php?profile=' . $db->id . '" target="_blank">' . $db->name . '</a>
 						</td>
 
 						<td>
@@ -4819,7 +4819,7 @@ if (isset($_GET['action']) && $_GET['action'] == "faq") {
 
 	<h3>I need information on joining the 501st Legion.</h3>
 	<p>
-		<a href="https://databank.501st.com/databank/Join_Us" target="_blank">Click here to learn how to join.</a>
+		<a href="https://www.501st.com/how-to-join/" target="_blank">Click here to learn how to join.</a>
 	</p>
 
 	<h3>Contact Garrison Web Master</h3>
