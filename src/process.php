@@ -2282,6 +2282,10 @@ if(isset($_GET['do']) && $_GET['do'] == "emailsettings" && loggedIn())
 	// Check for post request
 	if(isset($_POST['setemailsettings']))
 	{
+		// Only the e-mail settings can be toggled here. Checking against every column of the table
+		// let any member change their own permissions, approval and club flags.
+		if(!preg_match('/^(esquad\d+|efast|econfirm|ecommandnotify)$/D', $_POST['setting'] ?? '')) { exit; }
+
 		// Set up
 		$continue = false;
 
